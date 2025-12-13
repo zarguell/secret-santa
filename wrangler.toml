@@ -1,0 +1,23 @@
+name = "secret-santa"
+main = "src/index.ts"
+compatibility_date = "2025-11-21"
+compatibility_flags = ["nodejs_compat"]
+
+# Durable Objects binding
+[[durable_objects.bindings]]
+name = "PARTY_DO"
+class_name = "Party"
+
+# KV namespace
+[[kv_namespaces]]
+binding = "GUEST_KV"
+id = "8d7b6b4ef1b345b08c856998c2cc6311"
+
+# Static assets - correct syntax for Wrangler 4.x
+[assets]
+directory = "./public"
+
+[[migrations]]
+tag = "v1"
+new_sqlite_classes = ["Party"]
+

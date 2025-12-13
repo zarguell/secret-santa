@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>🎅 Secret Santa Generator</title>
+  <link rel="stylesheet" href="/style.css">
+</head>
+<body>
+  <div class="snow"></div>
+  <div class="snow"></div>
+  <div class="snow"></div>
+  
+  <div class="container">
+    <header>
+      <div class="logo">
+        <span class="santa-emoji">🎅</span>
+        <h1>Secret Santa</h1>
+      </div>
+      <p class="tagline">Create magical gift exchanges in seconds</p>
+    </header>
+
+    <div class="card">
+      <form id="partyForm">
+        <div class="form-group">
+          <label for="partyName">
+            <span class="icon">🎄</span>
+            Party Name
+          </label>
+          <input 
+            type="text" 
+            id="partyName" 
+            placeholder="Christmas 2025" 
+            required
+            autocomplete="off"
+          >
+        </div>
+        
+        <div class="form-row">
+          <div class="form-group">
+            <label for="budget">
+              <span class="icon">💰</span>
+              Budget (Optional)
+            </label>
+            <input 
+              type="text" 
+              id="budget" 
+              placeholder="$30"
+              autocomplete="off"
+            >
+          </div>
+          
+          <div class="form-group">
+            <label for="criteria">
+              <span class="icon">🎁</span>
+              Gift Ideas (Optional)
+            </label>
+            <input 
+              type="text" 
+              id="criteria" 
+              placeholder="Something thoughtful"
+              autocomplete="off"
+            >
+          </div>
+        </div>
+        
+        <div class="form-group">
+          <label for="guests">
+            <span class="icon">👥</span>
+            Participants (one per line, min. 2)
+          </label>
+          <textarea 
+            id="guests" 
+            rows="6" 
+            required 
+            placeholder="Alice&#10;Bob&#10;Charlie&#10;Diana"
+            autocomplete="off"
+          ></textarea>
+          <small class="hint">Add 2-50 participants</small>
+        </div>
+        
+        <button type="submit" class="btn-primary">
+          <span>✨ Create Secret Santa</span>
+        </button>
+      </form>
+    </div>
+
+    <div id="result" class="card result-card hidden">
+      <div class="success-header">
+        <span class="success-icon">🎉</span>
+        <h2>Party Created Successfully!</h2>
+        <p>Share these unique links with your participants</p>
+      </div>
+      
+      <div id="guestLinks" class="guest-links"></div>
+      
+      <div class="result-actions">
+        <button onclick="copyAllLinks()" class="btn-secondary">
+          📋 Copy All Links
+        </button>
+        <button onclick="resetForm()" class="btn-outline">
+          ➕ Create Another Party
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <footer>
+    <p>Made with ❤️ on Cloudflare Workers</p>
+  </footer>
+
+  <script src="/app.js"></script>
+</body>
+</html>
