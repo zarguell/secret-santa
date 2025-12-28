@@ -1,148 +1,185 @@
-import { Party } from './party';
-import { CreatePartyRequest, AssignRequest, GuestMapping } from './types';
-import { storeGuestMappings, getGuestMapping } from './kv';
+import { Party } from "./party";
+import { CreatePartyRequest, AssignRequest, GuestMapping } from "./types";
+import { storeGuestMappings, getGuestMapping } from "./kv";
 
 export { Party };
 
 export default {
-  async fetch(request: Request, env: Env, ctx: ExecutionContext): Promise<Response> {
+  async fetch(
+    request: Request,
+    env: Env,
+    ctx: ExecutionContext,
+  ): Promise<Response> {
     const url = new URL(request.url);
-    
+
     // CORS headers
     const corsHeaders = {
-      'Access-Control-Allow-Origin': '*',
-      'Access-Control-Allow-Methods': 'GET, POST, OPTIONS',
-      'Access-Control-Allow-Headers': 'Content-Type',
+      "Access-Control-Allow-Origin": "*",
+      "Access-Control-Allow-Methods": "GET, POST, OPTIONS",
+      "Access-Control-Allow-Headers": "Content-Type",
     };
-    
-    if (request.method === 'OPTIONS') {
+
+    if (request.method === "OPTIONS") {
       return new Response(null, { headers: corsHeaders });
     }
-    
+
     try {
       // ============= CREATE PARTY ENDPOINT =============
-      if (url.pathname === '/api/parties' && request.method === 'POST') {
-        const body = await request.json() as CreatePartyRequest;
-        
+      if (url.pathname === "/api/parties" && request.method === "POST") {
+        const body = (await request.json()) as CreatePartyRequest;
+
         // Validation
         if (!body.name || !body.guests || body.guests.length < 2) {
-          return new Response(JSON.stringify({ error: 'Party name and at least 2 guests required' }), {
-            status: 400,
-            headers: { ...corsHeaders, 'Content-Type': 'application/json' }
-          });
+          return new Response(
+            JSON.stringify({
+              error: "Party name and at least 2 guests required",
+            }),
+            {
+              status: 400,
+              headers: { ...corsHeaders, "Content-Type": "application/json" },
+            },
+          );
         }
-        
+
         if (body.guests.length > 50) {
-          return new Response(JSON.stringify({ error: 'Maximum 50 guests allowed' }), {
-            status: 400,
-            headers: { ...corsHeaders, 'Content-Type': 'application/json' }
-          });
+          return new Response(
+            JSON.stringify({ error: "Maximum 50 guests allowed" }),
+            {
+              status: 400,
+              headers: { ...corsHeaders, "Content-Type": "application/json" },
+            },
+          );
         }
-        
+
         // Check for duplicate guest names
         const uniqueGuests = [...new Set(body.guests)];
         if (uniqueGuests.length !== body.guests.length) {
-          return new Response(JSON.stringify({ error: 'Guest names must be unique' }), {
-            status: 400,
-            headers: { ...corsHeaders, 'Content-Type': 'application/json' }
-          });
+          return new Response(
+            JSON.stringify({ error: "Guest names must be unique" }),
+            {
+              status: 400,
+              headers: { ...corsHeaders, "Content-Type": "application/json" },
+            },
+          );
         }
-        
+
         // Create Durable Object for this party
         const partyId = env.PARTY_DO.newUniqueId();
         const partyStub = env.PARTY_DO.get(partyId);
-        
+
         // Create party in Durable Object
         const result = await partyStub.createParty({
           name: body.name,
-          budget: body.budget || '',
-          criteria: body.criteria || '',
-          guests: body.guests
+          budget: body.budget || "",
+          criteria: body.criteria || "",
+          guests: body.guests,
         });
-        
+
         // Store guest ID mappings in KV for lookup
-        await storeGuestMappings(env.GUEST_KV, result.guestMappings, result.partyId);
-        
+        await storeGuestMappings(
+          env.GUEST_KV,
+          result.guestMappings,
+          result.partyId,
+        );
+
         // Construct full URLs
         const baseUrl = url.origin;
         const guestUrls = Object.fromEntries(
-          Object.entries(result.guestUrls).map(([guest, path]) => [guest, `${baseUrl}${path}`])
+          Object.entries(result.guestUrls).map(([guest, path]) => [
+            guest,
+            `${baseUrl}${path}`,
+          ]),
         );
-        
-        return new Response(JSON.stringify({
-          partyId: result.partyId,
-          guestUrls,
-          party: {
-            id: result.partyId,
-            name: body.name,
-            budget: body.budget || '',
-            criteria: body.criteria || '',
-            guests: body.guests,
-            createdAt: new Date().toISOString()
-          }
-        }), {
-          headers: { ...corsHeaders, 'Content-Type': 'application/json' }
-        });
+
+        return new Response(
+          JSON.stringify({
+            partyId: result.partyId,
+            guestUrls,
+            party: {
+              id: result.partyId,
+              name: body.name,
+              budget: body.budget || "",
+              criteria: body.criteria || "",
+              guests: body.guests,
+              createdAt: new Date().toISOString(),
+            },
+          }),
+          {
+            headers: { ...corsHeaders, "Content-Type": "application/json" },
+          },
+        );
       }
-      
+
       // ============= GET GUEST ASSIGNMENT =============
-      if (url.pathname.match(/^\/api\/guest\/[a-f0-9-]+\/assignment$/) && request.method === 'GET') {
-        const guestId = url.pathname.split('/')[3];
-        
+      if (
+        url.pathname.match(/^\/api\/guest\/[a-f0-9-]+\/assignment$/) &&
+        request.method === "GET"
+      ) {
+        const guestId = url.pathname.split("/")[3];
+
         if (!guestId || guestId.length !== 36) {
-          return new Response(JSON.stringify({ error: 'Invalid guest ID' }), {
+          return new Response(JSON.stringify({ error: "Invalid guest ID" }), {
             status: 400,
-            headers: { ...corsHeaders, 'Content-Type': 'application/json' }
+            headers: { ...corsHeaders, "Content-Type": "application/json" },
           });
         }
-        
+
         const mapping = await getGuestMapping(env.GUEST_KV, guestId);
-        
+
         if (!mapping) {
-          return new Response(JSON.stringify({ error: 'Guest link not found' }), {
-            status: 404,
-            headers: { ...corsHeaders, 'Content-Type': 'application/json' }
-          });
+          return new Response(
+            JSON.stringify({ error: "Guest link not found" }),
+            {
+              status: 404,
+              headers: { ...corsHeaders, "Content-Type": "application/json" },
+            },
+          );
         }
-        
+
         try {
-          const partyStub = env.PARTY_DO.get(env.PARTY_DO.idFromString(mapping.partyId));
+          const partyStub = env.PARTY_DO.get(
+            env.PARTY_DO.idFromString(mapping.partyId),
+          );
           const result = await partyStub.getGuestAssignment(guestId);
-          
+
           return new Response(JSON.stringify(result), {
-            headers: { ...corsHeaders, 'Content-Type': 'application/json' }
+            headers: { ...corsHeaders, "Content-Type": "application/json" },
           });
         } catch (error) {
           return new Response(JSON.stringify({ error: error.message }), {
             status: 500,
-            headers: { ...corsHeaders, 'Content-Type': 'application/json' }
+            headers: { ...corsHeaders, "Content-Type": "application/json" },
           });
         }
       }
-      
+
       // ============= SERVE GUEST PAGE =============
-      if (url.pathname.match(/^\/guest\/[a-f0-9-]+$/) && request.method === 'GET') {
-        const guestId = url.pathname.split('/')[2];
-        
+      if (
+        url.pathname.match(/^\/guest\/[a-f0-9-]+$/) &&
+        request.method === "GET"
+      ) {
+        const guestId = url.pathname.split("/")[2];
+
         if (!guestId || guestId.length !== 36) {
-          return new Response('Invalid guest link', { 
+          return new Response("Invalid guest link", {
             status: 400,
-            headers: { 'Content-Type': 'text/html' }
+            headers: { "Content-Type": "text/html" },
           });
         }
-        
+
         // Validate guest exists
         const mapping = await getGuestMapping(env.GUEST_KV, guestId);
-        
+
         if (!mapping) {
-          return new Response('Guest link not found', { 
+          return new Response("Guest link not found", {
             status: 404,
-            headers: { 'Content-Type': 'text/html' }
+            headers: { "Content-Type": "text/html" },
           });
         }
-        
+
         // Serve guest.html inline
-        return new Response(`<!DOCTYPE html>
+        return new Response(
+          `<!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8">
@@ -244,26 +281,27 @@ export default {
     loadAssignment();
   </script>
 </body>
-</html>`, {
-          status: 200,
-          headers: { 'Content-Type': 'text/html' }
-        });
+</html>`,
+          {
+            status: 200,
+            headers: { "Content-Type": "text/html" },
+          },
+        );
       }
-      
+
       // All other routes fall through (404)
-      return new Response('Not found', { 
-        status: 404, 
-        headers: { ...corsHeaders, 'Content-Type': 'application/json' }
+      return new Response("Not found", {
+        status: 404,
+        headers: { ...corsHeaders, "Content-Type": "application/json" },
       });
-      
     } catch (error) {
-      console.error('Worker error:', error);
-      return new Response(JSON.stringify({ error: 'Internal server error' }), {
+      console.error("Worker error:", error);
+      return new Response(JSON.stringify({ error: "Internal server error" }), {
         status: 500,
-        headers: { ...corsHeaders, 'Content-Type': 'application/json' }
+        headers: { ...corsHeaders, "Content-Type": "application/json" },
       });
     }
-  }
+  },
 };
 
 // Environment bindings
