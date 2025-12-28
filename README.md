@@ -112,6 +112,7 @@ new_sqlite_classes = ["Party"]
 ## 🔌 API Endpoints
 
 ### Create Party
+
 ```http
 POST /api/parties
 Content-Type: application/json
@@ -125,6 +126,7 @@ Content-Type: application/json
 ```
 
 **Response:**
+
 ```json
 {
   "partyId": "uuid",
@@ -138,11 +140,13 @@ Content-Type: application/json
 ```
 
 ### Get Guest Assignment
+
 ```http
 GET /api/guest/{guestId}/assignment
 ```
 
 **Response:**
+
 ```json
 {
   "guestName": "Alice",
@@ -184,6 +188,7 @@ wrangler deployments list
 Visit `http://localhost:8787` to test locally.
 
 **Create a test party:**
+
 1. Fill in party details
 2. Add at least 2 guest names
 3. Click "Create Secret Santa"
@@ -202,11 +207,13 @@ Add a custom domain in Cloudflare Dashboard:
 ## 📊 Data Storage
 
 ### Durable Objects
+
 - **Party data** - Name, budget, criteria, guest list
 - **Assignments** - Secret Santa pairings
 - **Guest links** - Mapping of guest names to UUIDs
 
 ### KV Namespace
+
 - **Guest ID lookup** - Fast retrieval of party ID from guest UUID
 - **Key format**: `guest:{uuid}` → `{ partyId, guestName }`
 
@@ -228,16 +235,19 @@ Add a custom domain in Cloudflare Dashboard:
 ## 🐛 Troubleshooting
 
 ### "Guest link not found" error
+
 - Guest ID may not have been stored in KV properly
 - Check KV namespace ID in `wrangler.toml`
 - Verify KV namespace exists: `wrangler kv namespace list`
 
 ### Static files not loading
+
 - Ensure `public/` directory exists with all files
 - Check `[assets]` configuration in `wrangler.toml`
 - Guest page is served inline from Worker if assets fail
 
 ### Durable Objects error
+
 - Ensure you're using `new_sqlite_classes` in migrations
 - Verify `Party` class is exported in `src/index.ts`
 - Check compatibility_date is recent
@@ -249,6 +259,7 @@ MIT License - feel free to use for your holiday parties!
 ## 🎄 Contributing
 
 Contributions welcome! Some ideas:
+
 - Add rate limiting using Cloudflare's native API
 - Implement party editing/deletion
 - Add email notifications for assignments
@@ -258,12 +269,13 @@ Contributions welcome! Some ideas:
 ## 🙏 Acknowledgments
 
 Built with:
+
 - [Cloudflare Workers](https://workers.cloudflare.com/)
 - [Durable Objects](https://developers.cloudflare.com/durable-objects/)
 - [Workers KV](https://developers.cloudflare.com/kv/)
 - TypeScript & modern CSS
 
-***
+---
 
 **Made with ❤️ on Cloudflare Workers**
 

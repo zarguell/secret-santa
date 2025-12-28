@@ -1,75 +1,75 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>🎁 Your Secret Santa Assignment</title>
-  <link rel="stylesheet" href="/style.css">
-</head>
-<body class="guest-page">
-  <div class="snow"></div>
-  <div class="snow"></div>
-  <div class="snow"></div>
-  
-  <div class="container">
-    <div id="loading" class="loading">
-      <div class="spinner"></div>
-      <p>Loading your assignment...</p>
-    </div>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>🎁 Your Secret Santa Assignment</title>
+    <link rel="stylesheet" href="/style.css" />
+  </head>
+  <body class="guest-page">
+    <div class="snow"></div>
+    <div class="snow"></div>
+    <div class="snow"></div>
 
-    <div id="error" class="card error-card hidden">
-      <span class="error-icon">😕</span>
-      <h2>Oops!</h2>
-      <p id="errorMessage"></p>
-      <button onclick="window.location.reload()" class="btn-outline">
-        Try Again
-      </button>
-    </div>
+    <div class="container">
+      <div id="loading" class="loading">
+        <div class="spinner"></div>
+        <p>Loading your assignment...</p>
+      </div>
 
-    <div id="assignment" class="hidden">
-      <div class="card reveal-card">
-        <div class="reveal-header">
-          <span class="gift-emoji">🎁</span>
-          <h1>Hello, <span id="guestName"></span>!</h1>
-        </div>
+      <div id="error" class="card error-card hidden">
+        <span class="error-icon">😕</span>
+        <h2>Oops!</h2>
+        <p id="errorMessage"></p>
+        <button onclick="window.location.reload()" class="btn-outline">
+          Try Again
+        </button>
+      </div>
 
-        <div class="reveal-content">
-          <p class="reveal-label">You're buying a gift for:</p>
-          <div class="recipient-name" id="recipient"></div>
-          
-          <div class="confetti">🎊</div>
-        </div>
+      <div id="assignment" class="hidden">
+        <div class="card reveal-card">
+          <div class="reveal-header">
+            <span class="gift-emoji">🎁</span>
+            <h1>Hello, <span id="guestName"></span>!</h1>
+          </div>
 
-        <div class="party-info">
-          <h3>🎄 Party Details</h3>
-          <div class="info-grid">
-            <div class="info-item">
-              <span class="info-label">Party</span>
-              <span class="info-value" id="partyName"></span>
-            </div>
-            <div class="info-item">
-              <span class="info-label">Budget</span>
-              <span class="info-value" id="budget"></span>
-            </div>
-            <div class="info-item full-width">
-              <span class="info-label">Gift Ideas</span>
-              <span class="info-value" id="criteria"></span>
+          <div class="reveal-content">
+            <p class="reveal-label">You're buying a gift for:</p>
+            <div class="recipient-name" id="recipient"></div>
+
+            <div class="confetti">🎊</div>
+          </div>
+
+          <div class="party-info">
+            <h3>🎄 Party Details</h3>
+            <div class="info-grid">
+              <div class="info-item">
+                <span class="info-label">Party</span>
+                <span class="info-value" id="partyName"></span>
+              </div>
+              <div class="info-item">
+                <span class="info-label">Budget</span>
+                <span class="info-value" id="budget"></span>
+              </div>
+              <div class="info-item full-width">
+                <span class="info-label">Gift Ideas</span>
+                <span class="info-value" id="criteria"></span>
+              </div>
             </div>
           </div>
-        </div>
 
-        <div class="reminder">
-          <span class="reminder-icon">🤫</span>
-          <p>Remember: Keep it secret, keep it festive!</p>
+          <div class="reminder">
+            <span class="reminder-icon">🤫</span>
+            <p>Remember: Keep it secret, keep it festive!</p>
+          </div>
         </div>
       </div>
     </div>
-  </div>
 
-  <footer>
-    <p>Made with ❤️ on Cloudflare Workers</p>
-  </footer>
+    <footer>
+      <p>Made with ❤️ on Cloudflare Workers</p>
+    </footer>
 
-  <script src="/guest.js"></script>
-</body>
+    <script src="/guest.js"></script>
+  </body>
 </html>
