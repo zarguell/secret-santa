@@ -23,7 +23,7 @@ Every guest must be able to reliably view their Secret Santa assignment from the
 
 <!-- Current scope. Building toward these. -->
 
-- [ ] Full test coverage (utils, API, Durable Objects) using Vitest
+- [x] Full test coverage (utils, API, Durable Objects) using Vitest — 31 tests passing
 - [ ] Fix static HTML serving for guest pages (remove inline HTML workaround)
 - [ ] Single dev branch workflow for iterative development and deployment testing
 
@@ -59,7 +59,7 @@ Every guest must be able to reliably view their Secret Santa assignment from the
 
 | Decision | Rationale | Outcome |
 |----------|-----------|---------|
-| Vitest for testing | Fast, modern, Cloudflare Workers compatible | — Pending |
+| Vitest for testing | Fast, modern, Cloudflare Workers compatible | ✓ Implemented with @cloudflare/vitest-pool-workers |
 | Single dev branch | Simplify workflow while iterating on static file fix and tests | — Pending |
 | Static HTML serving priority over feature additions | Core value is reliable guest assignment viewing, inline HTML is workaround | — Pending |
 
