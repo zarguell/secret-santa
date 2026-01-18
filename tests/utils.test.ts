@@ -25,7 +25,9 @@ describe("generateAssignments", () => {
 
   it("should throw error for less than 2 guests", () => {
     expect(() => generateAssignments([])).toThrow("At least 2 guests required");
-    expect(() => generateAssignments(["Alice"])).toThrow("At least 2 guests required");
+    expect(() => generateAssignments(["Alice"])).toThrow(
+      "At least 2 guests required",
+    );
   });
 
   it("should assign all guests exactly once as givers", () => {

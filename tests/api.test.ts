@@ -118,7 +118,9 @@ describe("API Endpoints", () => {
       const response = await worker.fetch(request, env, {} as ExecutionContext);
 
       expect(response.headers.get("Access-Control-Allow-Origin")).toBe("*");
-      expect(response.headers.get("Access-Control-Allow-Methods")).toBe("GET, POST, OPTIONS");
+      expect(response.headers.get("Access-Control-Allow-Methods")).toBe(
+        "GET, POST, OPTIONS",
+      );
     });
   });
 
@@ -134,14 +136,20 @@ describe("API Endpoints", () => {
         }),
       });
 
-      const createResponse = await worker.fetch(createRequest, env, {} as ExecutionContext);
+      const createResponse = await worker.fetch(
+        createRequest,
+        env,
+        {} as ExecutionContext,
+      );
       const createData = await createResponse.json();
       const guestUrl = createData.guestUrls.Alice;
       guestId = guestUrl.split("/").pop();
     });
 
     it("should return assignment for valid guest ID", async () => {
-      const request = new Request(`http://localhost/api/guest/${guestId}/assignment`);
+      const request = new Request(
+        `http://localhost/api/guest/${guestId}/assignment`,
+      );
 
       const response = await worker.fetch(request, env, {} as ExecutionContext);
       const data = await response.json();
@@ -155,7 +163,9 @@ describe("API Endpoints", () => {
 
     it("should return 404 for non-existent guest", async () => {
       const fakeId = "00000000-0000-0000-0000-000000000000";
-      const request = new Request(`http://localhost/api/guest/${fakeId}/assignment`);
+      const request = new Request(
+        `http://localhost/api/guest/${fakeId}/assignment`,
+      );
 
       const response = await worker.fetch(request, env, {} as ExecutionContext);
 
@@ -164,7 +174,9 @@ describe("API Endpoints", () => {
 
     it("should return 404 for non-existent guest ID", async () => {
       const fakeId = "00000000-0000-0000-0000-000000000000";
-      const request = new Request(`http://localhost/api/guest/${fakeId}/assignment`);
+      const request = new Request(
+        `http://localhost/api/guest/${fakeId}/assignment`,
+      );
 
       const response = await worker.fetch(request, env, {} as ExecutionContext);
       const data = await response.json();
@@ -174,7 +186,9 @@ describe("API Endpoints", () => {
     });
 
     it("should include CORS headers", async () => {
-      const request = new Request(`http://localhost/api/guest/${guestId}/assignment`);
+      const request = new Request(
+        `http://localhost/api/guest/${guestId}/assignment`,
+      );
 
       const response = await worker.fetch(request, env, {} as ExecutionContext);
 
@@ -192,8 +206,12 @@ describe("API Endpoints", () => {
 
       expect(response.status).toBe(200);
       expect(response.headers.get("Access-Control-Allow-Origin")).toBe("*");
-      expect(response.headers.get("Access-Control-Allow-Methods")).toBe("GET, POST, OPTIONS");
-      expect(response.headers.get("Access-Control-Allow-Headers")).toBe("Content-Type");
+      expect(response.headers.get("Access-Control-Allow-Methods")).toBe(
+        "GET, POST, OPTIONS",
+      );
+      expect(response.headers.get("Access-Control-Allow-Headers")).toBe(
+        "Content-Type",
+      );
     });
   });
 
@@ -207,7 +225,11 @@ describe("API Endpoints", () => {
         }),
       });
 
-      const createResponse = await worker.fetch(createRequest, env, {} as ExecutionContext);
+      const createResponse = await worker.fetch(
+        createRequest,
+        env,
+        {} as ExecutionContext,
+      );
       const createData = await createResponse.json<{
         guestUrls: { [key: string]: string };
       }>();

@@ -79,7 +79,9 @@ describe("Party Durable Object", () => {
       guests: ["Alice", "Bob", "Charlie"],
     });
 
-    const guestId = createResult.guestMappings.find((m) => m.guestName === "Alice")!.guestId;
+    const guestId = createResult.guestMappings.find(
+      (m) => m.guestName === "Alice",
+    )!.guestId;
     const result = await partyStub.getGuestAssignment(guestId);
 
     expect(result.guestName).toBe("Alice");

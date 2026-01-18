@@ -19,6 +19,7 @@ Progress: ██████████ 5/5 plans complete (100%)
 ## Performance Metrics
 
 **Velocity:**
+
 - Total plans completed: 3
 - Average duration: ~2 hours
 - Total execution time: ~6 hours
@@ -26,10 +27,11 @@ Progress: ██████████ 5/5 plans complete (100%)
 **By Phase:**
 
 | Phase | Plans | Total | Avg/Plan |
-|-------|-------|-------|----------|
-| 1 | 3/3 | ~2h | 2h |
+| ----- | ----- | ----- | -------- |
+| 1     | 3/3   | ~2h   | 2h       |
 
 **Recent Trend:**
+
 - Last 5 plans: 01-01 (2h), 01-02 (2h), 01-03 (2h)
 - Trend: On track - testing foundation complete
 

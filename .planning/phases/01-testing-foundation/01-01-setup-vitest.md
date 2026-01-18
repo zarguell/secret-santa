@@ -31,7 +31,7 @@ Set up Vitest with proper configuration for Cloudflare Workers environment and e
 
 - [ ] Create basic test file structure
   - tests/ directory
-  - __tests__/ directory or test files alongside source
+  - **tests**/ directory or test files alongside source
   - test configuration for each module
 
 - [ ] Add test scripts to package.json
@@ -55,6 +55,7 @@ Set up Vitest with proper configuration for Cloudflare Workers environment and e
 ## Notes
 
 Research Cloudflare Workers + Vitest integration patterns from:
+
 - Cloudflare Workers documentation
 - Community examples of Workers testing
 - Vitest documentation for custom environments
