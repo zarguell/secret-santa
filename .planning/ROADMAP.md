@@ -60,5 +60,5 @@ Phases execute in numeric order: 1 → 2 → 3
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
 | 1. Testing Foundation | 3/3 | Complete | 2026-01-17 |
-| 2. Static File Serving | 0/1 | Not started | - |
-| 3. Development Workflow | 0/1 | Not started | - |
+| 2. Static File Serving | 1/1 | Complete | 2026-01-17 |
+| 3. Development Workflow | 1/1 | Complete | 2026-01-17 |
