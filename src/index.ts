@@ -160,13 +160,6 @@ export default {
       ) {
         const guestId = url.pathname.split("/")[2];
 
-        if (!guestId || guestId.length !== 36) {
-          return new Response("Invalid guest link", {
-            status: 400,
-            headers: { "Content-Type": "text/html" },
-          });
-        }
-
         // Validate guest exists
         const mapping = await getGuestMapping(env.GUEST_KV, guestId);
 
@@ -177,116 +170,119 @@ export default {
           });
         }
 
-        // Serve guest.html inline
-        return new Response(
-          `<!DOCTYPE html>
+        // Serve static guest.html from assets
+        try {
+          // Try to fetch from assets first
+          if (env.ASSETS && typeof env.ASSETS.fetch === "function") {
+            const assetResponse = await env.ASSETS.fetch(
+              new Request("http://localhost/guest.html"),
+            );
+            return assetResponse;
+          } else {
+            // Fallback: read from filesystem during development/testing
+            const guestHtml = `<!doctype html>
 <html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>🎁 Your Secret Santa Assignment</title>
-  <link rel="stylesheet" href="/style.css">
-</head>
-<body class="guest-page">
-  <div class="snow"></div>
-  <div class="snow"></div>
-  <div class="snow"></div>
-  
-  <div class="container">
-    <div id="loading" class="loading">
-      <div class="spinner"></div>
-      <p>Loading your assignment...</p>
-    </div>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>🎁 Your Secret Santa Assignment</title>
+    <link rel="stylesheet" href="/style.css" />
+  </head>
+  <body class="guest-page">
+    <div class="snow"></div>
+    <div class="snow"></div>
+    <div class="snow"></div>
 
-    <div id="error" class="card error-card hidden">
-      <span class="error-icon">😕</span>
-      <h2>Oops!</h2>
-      <p id="errorMessage"></p>
-      <button onclick="window.location.reload()" class="btn-outline">Try Again</button>
-    </div>
+    <div class="container">
+      <div id="loading" class="loading">
+        <div class="spinner"></div>
+        <p>Loading your assignment...</p>
+      </div>
 
-    <div id="assignment" class="hidden">
-      <div class="card reveal-card">
-        <div class="reveal-header">
-          <span class="gift-emoji">🎁</span>
-          <h1>Hello, <span id="guestName"></span>!</h1>
-        </div>
+      <div id="error" class="card error-card hidden">
+        <span class="error-icon">😕</span>
+        <h2>Oops!</h2>
+        <p id="errorMessage"></p>
+        <button onclick="window.location.reload()" class="btn-outline">
+          Try Again
+        </button>
+      </div>
 
-        <div class="reveal-content">
-          <p class="reveal-label">You're buying a gift for:</p>
-          <div class="recipient-name" id="recipient"></div>
-          <div class="confetti">🎊</div>
-        </div>
+      <div id="assignment" class="hidden">
+        <div class="card reveal-card">
+          <div class="reveal-header">
+            <span class="gift-emoji">🎁</span>
+            <h1>Hello, <span id="guestName"></span>!</h1>
+          </div>
 
-        <div class="party-info">
-          <h3>🎄 Party Details</h3>
-          <div class="info-grid">
-            <div class="info-item">
-              <span class="info-label">Party</span>
-              <span class="info-value" id="partyName"></span>
-            </div>
-            <div class="info-item">
-              <span class="info-label">Budget</span>
-              <span class="info-value" id="budget"></span>
-            </div>
-            <div class="info-item full-width">
-              <span class="info-label">Gift Ideas</span>
-              <span class="info-value" id="criteria"></span>
+          <div class="reveal-content">
+            <p class="reveal-label">You're buying a gift for:</p>
+            <div class="recipient-name" id="recipient"></div>
+            <div class="confetti">🎊</div>
+          </div>
+
+          <div class="party-info">
+            <h3>🎄 Party Details</h3>
+            <div class="info-grid">
+              <div class="info-item">
+                <span class="info-label">Party</span>
+                <span class="info-value" id="partyName"></span>
+              </div>
+              <div class="info-item">
+                <span class="info-label">Budget</span>
+                <span class="info-value" id="budget"></span>
+              </div>
+              <div class="info-item full-width">
+                <span class="info-label">Gift Ideas</span>
+                <span class="info-value" id="criteria"></span>
+              </div>
             </div>
           </div>
-        </div>
 
-        <div class="reminder">
-          <span class="reminder-icon">🤫</span>
-          <p>Remember: Keep it secret, keep it festive!</p>
+          <div class="reminder">
+            <span class="reminder-icon">🤫</span>
+            <p>Remember: Keep it secret, keep it festive!</p>
+          </div>
         </div>
       </div>
     </div>
-  </div>
 
-  <footer>
-    <p>Made with ❤️ on Cloudflare Workers</p>
-  </footer>
+    <footer>
+      <p>Made with ❤️ on Cloudflare Workers</p>
+    </footer>
 
-  <script>
-    const guestId = window.location.pathname.split('/')[2];
-    async function loadAssignment() {
-      try {
-        const response = await fetch('/api/guest/' + guestId + '/assignment');
-        if (response.status === 404) {
-          showError('Invalid guest link.');
-          return;
-        }
-        if (!response.ok) {
-          showError('Failed to load assignment.');
-          return;
-        }
-        const data = await response.json();
-        document.getElementById('loading').classList.add('hidden');
-        document.getElementById('assignment').classList.remove('hidden');
-        document.getElementById('guestName').textContent = data.guestName;
-        document.getElementById('recipient').textContent = data.assignment;
-        document.getElementById('partyName').textContent = data.party.name;
-        document.getElementById('budget').textContent = data.party.budget || 'Not specified';
-        document.getElementById('criteria').textContent = data.party.criteria || 'Surprise them!';
-      } catch (error) {
-        showError('Network error.');
-      }
-    }
-    function showError(message) {
-      document.getElementById('loading').classList.add('hidden');
-      document.getElementById('error').classList.remove('hidden');
-      document.getElementById('errorMessage').textContent = message;
-    }
-    loadAssignment();
-  </script>
-</body>
-</html>`,
-          {
-            status: 200,
+    <script src="/guest.js"></script>
+  </body>
+</html>`;
+            return new Response(guestHtml, {
+              status: 200,
+              headers: { "Content-Type": "text/html" },
+            });
+          }
+        } catch (error) {
+          console.error("Failed to fetch asset:", error);
+          return new Response("Failed to load guest page", {
+            status: 500,
             headers: { "Content-Type": "text/html" },
-          },
-        );
+          });
+        }
+      }
+
+      // ============= VALIDATE GUEST ID FORMAT =============
+      if (url.pathname.match(/^\/guest\//) && request.method === "GET") {
+        const guestId = url.pathname.split("/")[2];
+
+        if (!guestId || guestId.length !== 36) {
+          return new Response("Invalid guest link", {
+            status: 400,
+            headers: { "Content-Type": "text/html" },
+          });
+        }
+
+        return new Response("Guest link not found", {
+          status: 404,
+          headers: { "Content-Type": "text/html" },
+        });
       }
 
       // All other routes fall through (404)
@@ -308,4 +304,5 @@ export default {
 export interface Env {
   PARTY_DO: DurableObjectNamespace<Party>;
   GUEST_KV: KVNamespace;
+  ASSETS: Fetcher;
 }
