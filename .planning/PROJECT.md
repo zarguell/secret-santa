@@ -6,12 +6,12 @@ A serverless Secret Santa application built on Cloudflare Workers. Party organiz
 
 ## Current State
 
-**Version:** v1.0 MVP (shipped 2026-01-19)
+**Version:** v1.1 Wishlist Feature (in progress)
 **Architecture:** Cloudflare Workers + Durable Objects + KV
 **Test Coverage:** 31 tests passing with Vitest
 **Lines of Code:** 531 TypeScript
 
-The application has been transformed from functional but untested to a robust, tested serverless application with proper static file serving and a reliable development workflow.
+The application has been transformed from functional but untested to a robust, tested serverless application with proper static file serving and a reliable development workflow. Now adding wishlist functionality to improve guest experience.
 
 ## Core Value
 
@@ -35,15 +35,19 @@ Every guest must be able to reliably view their Secret Santa assignment from the
 
 <!-- Current scope. Building toward these. -->
 
-*No active requirements. Run `/gsd-new-milestone` to define v1.1 requirements.*
+- [ ] Wishlist storage in Durable Objects — v1.1
+- [ ] Guest can view/edit their own wishlist (~500 chars) — v1.1
+- [ ] Guest can view their assigned recipient's wishlist — v1.1
+- [ ] UI updates to guest.html for wishlist forms — v1.1
+- [ ] Test coverage for wishlist features — v1.1
 
 ### Out of Scope
 
 <!-- Explicit boundaries. Includes reasoning to prevent re-adding. -->
 
 - Email notifications — v1 focuses on link-based access only
-- Wish lists and gift tracking — out of scope for initial goals
-- Party editing or guest management — out of scope for initial goals
+- Party editing or guest management — out of scope for current goals
+- Complex wishlist features (structured items, images, etc.) — keeping v1.1 simple with freeform text
 
 ## Context
 
@@ -74,4 +78,4 @@ None — all v1.0 issues resolved
 | Static HTML serving priority over feature additions | Core value is reliable guest assignment viewing, inline HTML is workaround | ✓ Implemented |
 
 ---
-*Last updated: 2026-01-19 after v1.0 milestone*
+*Last updated: 2026-01-19 after v1.1 milestone start*
