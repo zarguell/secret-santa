@@ -29,3 +29,8 @@ export interface GuestMapping {
   partyId: string;
   guestName: string;
 }
+
+// Wishlist storage note:
+// Wishlists are stored as simple strings in Durable Object storage
+// using per-guest keys: `wishlist:${guestId}` format
+// No separate WishlistData interface needed - just string values
