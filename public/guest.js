@@ -150,11 +150,13 @@ function showError(message) {
   errorDiv.classList.remove("hidden");
 }
 
-// Event listeners for wishlist
-document.getElementById("wishlistText").addEventListener("input", updateCounter);
-document
-  .getElementById("saveWishlistBtn")
-  .addEventListener("click", saveWishlist);
+// Event listeners for wishlist (wait for DOM to be ready)
+document.addEventListener("DOMContentLoaded", function () {
+  document.getElementById("wishlistText")?.addEventListener("input", updateCounter);
+  document.getElementById("saveWishlistBtn")?.addEventListener("click", saveWishlist);
+});
 
 // Load assignment on page load
-loadAssignment();
+document.addEventListener("DOMContentLoaded", function () {
+  loadAssignment();
+});
