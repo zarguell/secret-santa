@@ -24,9 +24,9 @@ Requirements for v1.1 milestone. Each maps to roadmap phases.
 
 ### User Interface (UI)
 
-- [ ] **UI-01**: Guest page displays "My Wishlist" section with textarea form
-- [ ] **UI-02**: Character counter displays current length / 500 as user types
-- [ ] **UI-03**: Guest page loads and displays guest's current wishlist on page load
+- [x] **UI-01**: Guest page displays "My Wishlist" section with textarea form
+- [x] **UI-02**: Character counter displays current length / 500 as user types
+- [x] **UI-03**: Guest page loads and displays guest's current wishlist on page load
 - [ ] **UI-04**: Assignment view displays "Recipient's Wishlist" section
 - [ ] **UI-05**: UI handles empty wishlist state (no wishlist set message)
 
@@ -81,9 +81,9 @@ Which phases cover which requirements. Updated during roadmap creation.
 | API-02 | Phase 5 | Complete |
 | API-03 | Phase 5 | Complete |
 | API-04 | Phase 5 | Complete |
-| UI-01 | Phase 6 | Pending |
-| UI-02 | Phase 6 | Pending |
-| UI-03 | Phase 6 | Pending |
+| UI-01 | Phase 6 | Complete |
+| UI-02 | Phase 6 | Complete |
+| UI-03 | Phase 6 | Complete |
 | UI-04 | Phase 7 | Pending |
 | UI-05 | Phase 7 | Pending |
 | TEST-01 | Phase 4 | Complete |
@@ -97,4 +97,4 @@ Which phases cover which requirements. Updated during roadmap creation.
 
 ---
 *Requirements defined: 2026-01-19*
-*Last updated: 2026-01-20 - Phase 5 requirements marked complete*
+*Last updated: 2026-01-20 - Phase 6 requirements marked complete*
