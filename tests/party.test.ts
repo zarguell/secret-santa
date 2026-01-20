@@ -124,4 +124,246 @@ describe("Party Durable Object", () => {
     expect(party.guestLinks).toBeTruthy();
     expect(party.createdAt).toBeTruthy();
   });
+
+    describe("Wishlist Storage", () => {
+    it("should store and retrieve wishlist for a guest", async () => {
+      partyId = env.PARTY_DO.newUniqueId();
+      partyStub = env.PARTY_DO.get(partyId);
+
+      const createResult = await partyStub.createParty({
+        name: "Test Party",
+        guests: ["Alice", "Bob"],
+      });
+
+      const guestId = createResult.guestMappings.find(
+        (m) => m.guestName === "Alice"
+      )!.guestId;
+
+      // Set wishlist
+      await partyStub.setWishlist(guestId, "I want a new coffee maker");
+
+      // Get wishlist
+      const result = await partyStub.getWishlist(guestId);
+
+      expect(result).toBe("I want a new coffee maker");
+    });
+
+    it("should return empty string for missing wishlist", async () => {
+      partyId = env.PARTY_DO.newUniqueId();
+      partyStub = env.PARTY_DO.get(partyId);
+
+      const createResult = await partyStub.createParty({
+        name: "Test Party",
+        guests: ["Alice", "Bob"],
+      });
+
+      const guestId = createResult.guestMappings.find(
+        (m) => m.guestName === "Alice"
+      )!.guestId;
+
+      // Get wishlist without setting it
+      const result = await partyStub.getWishlist(guestId);
+
+      expect(result).toBe("");
+    });
+
+    it("should reject wishlist exceeding 500 characters", async () => {
+      partyId = env.PARTY_DO.newUniqueId();
+      partyStub = env.PARTY_DO.get(partyId);
+
+      const createResult = await partyStub.createParty({
+        name: "Test Party",
+        guests: ["Alice", "Bob"],
+      });
+
+      const guestId = createResult.guestMappings.find(
+        (m) => m.guestName === "Alice"
+      )!.guestId;
+
+      // Try to set wishlist with 501 characters
+      const longWishlist = "x".repeat(501);
+
+      let errorThrown = false;
+      try {
+        await partyStub.setWishlist(guestId, longWishlist);
+      } catch (e) {
+        errorThrown = true;
+        expect((e as Error).message).toBe(
+          "Wishlist must be 500 characters or less"
+        );
+      }
+      expect(errorThrown).toBe(true);
+    });
+
+    it("should accept wishlist exactly 500 characters", async () => {
+      partyId = env.PARTY_DO.newUniqueId();
+      partyStub = env.PARTY_DO.get(partyId);
+
+      const createResult = await partyStub.createParty({
+        name: "Test Party",
+        guests: ["Alice", "Bob"],
+      });
+
+      const guestId = createResult.guestMappings.find(
+        (m) => m.guestName === "Alice"
+      )!.guestId;
+
+      // Set wishlist with exactly 500 characters
+      const maxWishlist = "x".repeat(500);
+
+      await partyStub.setWishlist(guestId, maxWishlist);
+      const result = await partyStub.getWishlist(guestId);
+
+      expect(result).toBe(maxWishlist);
+      expect(result.length).toBe(500);
+    });
+
+    it("should reject non-string wishlist", async () => {
+      partyId = env.PARTY_DO.newUniqueId();
+      partyStub = env.PARTY_DO.get(partyId);
+
+      const createResult = await partyStub.createParty({
+        name: "Test Party",
+        guests: ["Alice", "Bob"],
+      });
+
+      const guestId = createResult.guestMappings.find(
+        (m) => m.guestName === "Alice"
+      )!.guestId;
+
+      // @ts-expect-error - Testing type validation
+      let errorThrown = false;
+      try {
+        await partyStub.setWishlist(guestId, null as any);
+      } catch (e) {
+        errorThrown = true;
+        expect((e as Error).message).toBe("Wishlist must be a string");
+      }
+      expect(errorThrown).toBe(true);
+
+      // @ts-expect-error - Testing type validation
+      errorThrown = false;
+      try {
+        await partyStub.setWishlist(guestId, 123 as any);
+      } catch (e) {
+        errorThrown = true;
+        expect((e as Error).message).toBe("Wishlist must be a string");
+      }
+      expect(errorThrown).toBe(true);
+    });
+
+    it("should reject wishlist for non-existent guest", async () => {
+      partyId = env.PARTY_DO.newUniqueId();
+      partyStub = env.PARTY_DO.get(partyId);
+
+      await partyStub.createParty({
+        name: "Test Party",
+        guests: ["Alice", "Bob"],
+      });
+
+      // Use a fake guest ID
+      const fakeGuestId = crypto.randomUUID();
+
+      let errorThrown = false;
+      try {
+        await partyStub.setWishlist(fakeGuestId, "I want a coffee maker");
+      } catch (e) {
+        errorThrown = true;
+        expect((e as Error).message).toBe("Guest not found in this party");
+      }
+      expect(errorThrown).toBe(true);
+    });
+
+    it("should store separate wishlists for different guests", async () => {
+      partyId = env.PARTY_DO.newUniqueId();
+      partyStub = env.PARTY_DO.get(partyId);
+
+      const createResult = await partyStub.createParty({
+        name: "Test Party",
+        guests: ["Alice", "Bob", "Charlie"],
+      });
+
+      const aliceId = createResult.guestMappings.find(
+        (m) => m.guestName === "Alice"
+      )!.guestId;
+      const bobId = createResult.guestMappings.find(
+        (m) => m.guestName === "Bob"
+      )!.guestId;
+
+      await partyStub.setWishlist(aliceId, "Alice wants books");
+      await partyStub.setWishlist(bobId, "Bob wants games");
+
+      const aliceWishlist = await partyStub.getWishlist(aliceId);
+      const bobWishlist = await partyStub.getWishlist(bobId);
+
+      expect(aliceWishlist).toBe("Alice wants books");
+      expect(bobWishlist).toBe("Bob wants games");
+    });
+
+    it("should handle empty wishlist updates", async () => {
+      partyId = env.PARTY_DO.newUniqueId();
+      partyStub = env.PARTY_DO.get(partyId);
+
+      const createResult = await partyStub.createParty({
+        name: "Test Party",
+        guests: ["Alice", "Bob"],
+      });
+
+      const guestId = createResult.guestMappings.find(
+        (m) => m.guestName === "Alice"
+      )!.guestId;
+
+      // Set a wishlist
+      await partyStub.setWishlist(guestId, "I want a coffee maker");
+
+      // Update to empty string
+      await partyStub.setWishlist(guestId, "");
+
+      const result = await partyStub.getWishlist(guestId);
+
+      expect(result).toBe("");
+    });
+
+    it("should handle Unicode characters in wishlist", async () => {
+      partyId = env.PARTY_DO.newUniqueId();
+      partyStub = env.PARTY_DO.get(partyId);
+
+      const createResult = await partyStub.createParty({
+        name: "Test Party",
+        guests: ["Alice", "Bob"],
+      });
+
+      const guestId = createResult.guestMappings.find(
+        (m) => m.guestName === "Alice"
+      )!.guestId;
+
+      const unicodeWishlist = "🎁 我想一个咖啡机 ☕ Привет";
+
+      await partyStub.setWishlist(guestId, unicodeWishlist);
+      const result = await partyStub.getWishlist(guestId);
+
+      expect(result).toBe(unicodeWishlist);
+    });
+
+    it("should handle newlines and special characters", async () => {
+      partyId = env.PARTY_DO.newUniqueId();
+      partyStub = env.PARTY_DO.get(partyId);
+
+      const createResult = await partyStub.createParty({
+        name: "Test Party",
+        guests: ["Alice", "Bob"],
+      });
+
+      const guestId = createResult.guestMappings.find(
+        (m) => m.guestName === "Alice"
+      )!.guestId;
+
+      const multilineWishlist = "Item 1\nItem 2\nItem 3\tTabs too!";
+
+      await partyStub.setWishlist(guestId, multilineWishlist);
+      const result = await partyStub.getWishlist(guestId);
+
+      expect(result).toBe(multilineWishlist);
+    });
+  });
 });
