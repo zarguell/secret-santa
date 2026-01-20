@@ -142,9 +142,112 @@ export default {
           );
           const result = await partyStub.getGuestAssignment(guestId);
 
-          return new Response(JSON.stringify(result), {
+          // Get party data to look up recipient's guestId
+          const partyData = await partyStub.getParty();
+          const recipientGuestId = partyData.guestLinks[result.assignment];
+
+          // Add recipientGuestId to response
+          const responseWithRecipient = {
+            ...result,
+            recipientGuestId,
+          };
+
+          return new Response(JSON.stringify(responseWithRecipient), {
             headers: { ...corsHeaders, "Content-Type": "application/json" },
           });
+        } catch (error) {
+          return new Response(JSON.stringify({ error: error.message }), {
+            status: 500,
+            headers: { ...corsHeaders, "Content-Type": "application/json" },
+          });
+        }
+      }
+
+      // ============= PUT GUEST WISHLIST =============
+      if (
+        url.pathname.match(/^\/api\/guest\/[a-f0-9-]+\/wishlist$/) &&
+        request.method === "PUT"
+      ) {
+        const guestId = url.pathname.split("/")[3];
+
+        if (!guestId || guestId.length !== 36) {
+          return new Response(JSON.stringify({ error: "Invalid guest ID" }), {
+            status: 400,
+            headers: { ...corsHeaders, "Content-Type": "application/json" },
+          });
+        }
+
+        const mapping = await getGuestMapping(env.GUEST_KV, guestId);
+
+        if (!mapping) {
+          return new Response(
+            JSON.stringify({ error: "Guest link not found" }),
+            {
+              status: 404,
+              headers: { ...corsHeaders, "Content-Type": "application/json" },
+            },
+          );
+        }
+
+        try {
+          const body = (await request.json()) as { wishlist: string };
+          const partyStub = env.PARTY_DO.get(
+            env.PARTY_DO.idFromString(mapping.partyId),
+          );
+          await partyStub.setWishlist(guestId, body.wishlist);
+
+          return new Response(
+            JSON.stringify({ success: true }),
+            {
+              headers: { ...corsHeaders, "Content-Type": "application/json" },
+            },
+          );
+        } catch (error) {
+          return new Response(JSON.stringify({ error: error.message }), {
+            status: 500,
+            headers: { ...corsHeaders, "Content-Type": "application/json" },
+          });
+        }
+      }
+
+      // ============= GET GUEST WISHLIST =============
+      if (
+        url.pathname.match(/^\/api\/guest\/[a-f0-9-]+\/wishlist$/) &&
+        request.method === "GET"
+      ) {
+        const guestId = url.pathname.split("/")[3];
+
+        if (!guestId || guestId.length !== 36) {
+          return new Response(JSON.stringify({ error: "Invalid guest ID" }), {
+            status: 400,
+            headers: { ...corsHeaders, "Content-Type": "application/json" },
+          });
+        }
+
+        const mapping = await getGuestMapping(env.GUEST_KV, guestId);
+
+        if (!mapping) {
+          return new Response(
+            JSON.stringify({ error: "Guest link not found" }),
+            {
+              status: 404,
+              headers: { ...corsHeaders, "Content-Type": "application/json" },
+            },
+          );
+        }
+
+        try {
+          const partyStub = env.PARTY_DO.get(
+            env.PARTY_DO.idFromString(mapping.partyId),
+          );
+          const wishlist = await partyStub.getWishlist(guestId);
+
+          return new Response(
+            JSON.stringify({ wishlist }),
+            {
+              headers: { ...corsHeaders, "Content-Type": "application/json" },
+            },
+          );
         } catch (error) {
           return new Response(JSON.stringify({ error: error.message }), {
             status: 500,
