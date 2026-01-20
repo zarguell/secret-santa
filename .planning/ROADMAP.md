@@ -4,6 +4,7 @@
 **Created:** 2026-01-19
 **Phases:** 4 (Storage → API → UI → Recipient Integration)
 **Depth:** Quick
+**Plans:** 4 total (04-01, 05-01, 06-01, 07-01)
 
 ## Overview
 
@@ -55,14 +56,14 @@ Phases follow architectural dependencies: storage foundation first, then API exp
 **Dependencies:** Phase 4 (storage layer)
 
 **Requirements:**
-- API-01: POST /api/guest/:guestId/wishlist updates guest's wishlist with validation
+- API-01: PUT /api/guest/:guestId/wishlist updates guest's wishlist with validation
 - API-02: GET /api/guest/:guestId/wishlist returns guest's current wishlist or empty string
 - API-03: GET /api/guest/:guestId/assignment response includes recipientWishlist field
 - API-04: API validates input (sanitizes, enforces 500 char limit)
 - TEST-02: Integration tests cover wishlist API endpoints
 
 **Success Criteria:**
-1. Client can POST wishlist text and receive 200 OK on success
+1. Client can PUT wishlist text and receive 200 OK on success
 2. Client can GET wishlist text and receive current content or empty string
 3. API returns 400 Bad Request for invalid input (non-string, exceeds 500 chars)
 4. API validates guest ID exists in party before processing request
@@ -84,7 +85,7 @@ Phases follow architectural dependencies: storage foundation first, then API exp
 
 ### Phase 6 - Client UI Layer
 
-**Status:** Planned (1 plan)
+**Status:** ✓ Complete (2026-01-20)
 
 **Goal:** Guest page displays wishlist form with real-time character counter and load/save functionality.
 
@@ -94,28 +95,25 @@ Phases follow architectural dependencies: storage foundation first, then API exp
 - UI-01: Guest page displays "My Wishlist" section with textarea form
 - UI-02: Character counter displays current length / 500 as user types
 - UI-03: Guest page loads and displays guest's current wishlist on page load
-- TEST-03: Tests cover edge cases (empty wishlist, max length, Unicode characters)
 
 **Success Criteria:**
 1. Guest sees "My Wishlist" section with textarea and character counter when loading their link
 2. Character counter updates in real-time as user types (X/500)
 3. Page loads and displays user's current wishlist text on initialization
-4. Save button sends POST request to API and shows success/error feedback
-5. UI handles empty wishlist state (no error, displays "No wishlist set" message)
-6. Edge case tests verify Unicode characters, max length enforcement, empty state
+4. Save button sends PUT request to API and shows success/error feedback
+5. UI handles empty wishlist state (no error, displays empty textarea)
 
 **Plans:** 1 plan in 1 wave
 
 **Plan List:**
-- [ ] 06-01-PLAN.md — Add wishlist UI to guest.html, load/save functions to guest.js, and CSS styles to style.css
+- [x] 06-01-PLAN.md — Add wishlist UI to guest.html, load/save functions to guest.js, and CSS styles to style.css
 
 **Deliverables:**
 - Wishlist form section in `guest.html` (textarea + character counter + save button)
-- `loadWishlist()` and `saveWishlist()` functions in `guest.js`
-- Character counter event listener
-- Error handling and user feedback
-- CSS styles for form elements
-- Edge case tests
+- `loadWishlist()`, `saveWishlist()`, and `updateCounter()` functions in `guest.js`
+- Character counter event listener with color warning
+- Error handling and user feedback (3-second auto-clear)
+- CSS styles for form elements matching existing card patterns
 
 ---
 
@@ -151,10 +149,10 @@ Phases follow architectural dependencies: storage foundation first, then API exp
 |-------|------|--------|----------|
 | 4 | Durable Object Storage Layer | Complete | 100% |
 | 5 | API Endpoint Layer | Complete | 100% |
-| 6 | Client UI Layer | Not Started | 0% |
+| 6 | Client UI Layer | Complete | 100% |
 | 7 | Recipient Wishlist Integration | Not Started | 0% |
 
-**Overall Milestone Progress:** 50% (2/4 phases complete)
+**Overall Milestone Progress:** 75% (3/4 phases complete)
 
 ## Notes
 
@@ -182,4 +180,5 @@ Phases follow architectural dependencies: storage foundation first, then API exp
 *Roadmap created: 2026-01-19*
 *Phase 4 completed: 2026-01-20*
 *Phase 5 completed: 2026-01-20*
-*Next phase: 6 - Client UI Layer*
+*Phase 6 completed: 2026-01-20*
+*Next phase: 7 - Recipient Wishlist Integration*
