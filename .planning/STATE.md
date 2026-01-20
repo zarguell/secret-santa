@@ -14,13 +14,20 @@
 
 ## Current Position
 
-**Phase:** 5 of 4 (API Endpoint Layer) - not yet started
+**Phase:** 5 of 4 (API Endpoint Layer) - plan 1 of 1 complete
 
-**Plan:** None (awaiting `/gsd-plan-phase 5`)
+**Plan:** 1 of 1 complete
 
-**Status:** Phase 4 verified complete, ready to plan Phase 5
+**Status:** Phase 5 complete, ready for Phase 6
 
 **Progress Bar:**
+```
+Phase 4: [██████████] 100% - Durable Object Storage Layer
+Phase 5: [██████████] 100% - API Endpoint Layer
+Phase 6: [░░░░░░░░░] 0% - Client UI Layer
+Phase 7: [░░░░░░░░░] 0% - Recipient Wishlist Integration
+
+Overall: [████░░░░░░░] 50% (2/4 phases complete)
 ```
 Phase 4: [██████████] 100% - Durable Object Storage Layer
 Phase 5: [░░░░░░░░░░] 0% - API Endpoint Layer
@@ -92,11 +99,17 @@ Overall: [██░░░░░░░░] 25% (1/4 phases complete)
 - [x] 500 character validation enforced
 - [x] Empty state handling returns ""
 
-**Upcoming (Phases 5-7):**
-- [ ] Plan Phase 5: API Endpoint Layer
+**Completed (Phase 5):**
+- [x] Implement PUT /api/guest/:guestId/wishlist endpoint
+- [x] Implement GET /api/guest/:guestId/wishlist endpoint
+- [x] Extend assignment response with recipientGuestId field
+- [x] Write integration tests for wishlist endpoints (16 tests, 32 total API tests)
+- [x] Update CORS headers to include PUT method
+
+**Upcoming (Phases 6-7):**
 - [ ] Plan Phase 6: Client UI Layer
 - [ ] Plan Phase 7: Recipient Wishlist Integration
-- [ ] Execute phases 5-7
+- [ ] Execute phases 6-7
 
 ### Blockers
 
@@ -108,20 +121,22 @@ None — v1.0 issues all resolved, wishlist storage layer complete. One document
 
 ## Session Continuity
 
-**Last session:** Completed and verified Phase 4 - Durable Object Storage Layer
+**Last session:** 2026-01-20 - Completed Phase 5 - API Endpoint Layer
 
-**Next session:** Run `/gsd-plan-phase 5` to create API Endpoint Layer plans
+**Next session:** Run `/gsd-plan-phase 6` to create Client UI Layer plans
 
 **Context for next session:**
-- Wishlist storage methods implemented (setWishlist, getWishlist)
-- Per-guest key pattern: `wishlist:${guestId}`
-- 500 character validation enforced
-- 10 unit tests for wishlist functionality
-- Ready to build API endpoints that call DO methods
+- Wishlist API endpoints implemented (PUT/GET /api/guest/:guestId/wishlist)
+- Assignment response includes recipientGuestId field for Phase 7
+- CORS headers include PUT, GET, POST, OPTIONS methods
+- 57 tests passing (32 API tests + 25 other tests)
+- 500 character validation enforced at DO layer
+- Empty wishlists return "" string
+- Ready to build client UI for wishlist management
 
 **Commands to continue:**
 ```bash
-/gsd-plan-phase 5    # Create plan for API Endpoint Layer
+/gsd-plan-phase 6    # Create plan for Client UI Layer
 /gsd-status          # Check current status
 /gsd-roadmap         # Review roadmap
 ```
