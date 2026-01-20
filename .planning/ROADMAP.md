@@ -32,11 +32,15 @@ Phases follow architectural dependencies: storage foundation first, then API exp
 3. System returns empty string when no wishlist exists for a guest (not null/undefined)
 4. Unit tests verify storage/retrieval, validation, and empty state handling
 
+**Plans:** 1 plan in 1 wave
+
+**Plan List:**
+- [ ] 04-01-PLAN.md — Add wishlist types, DO methods (setWishlist/getWishlist), and comprehensive unit tests
+
 **Deliverables:**
-- `WishlistData` interface in `types.ts`
 - `setWishlist(guestId, text)` and `getWishlist(guestId)` methods in Party class
 - Validation logic (500 char limit, guest exists in party)
-- Unit tests for all DO wishlist methods
+- Unit tests for all DO wishlist methods (10 test cases)
 
 ---
 
@@ -129,7 +133,7 @@ Phases follow architectural dependencies: storage foundation first, then API exp
 
 | Phase | Name | Status | Progress |
 |-------|------|--------|----------|
-| 4 | Durable Object Storage Layer | Not Started | 0% |
+| 4 | Durable Object Storage Layer | Planned | 0% |
 | 5 | API Endpoint Layer | Not Started | 0% |
 | 6 | Client UI Layer | Not Started | 0% |
 | 7 | Recipient Wishlist Integration | Not Started | 0% |
