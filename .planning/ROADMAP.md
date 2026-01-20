@@ -66,6 +66,11 @@ Phases follow architectural dependencies: storage foundation first, then API exp
 4. API validates guest ID exists in party before processing request
 5. Integration tests verify endpoints handle valid and invalid requests
 
+**Plans:** 1 plan in 1 wave
+
+**Plan List:**
+- [ ] 05-01-PLAN.md — Implement PUT/GET /api/guest/:guestId/wishlist endpoints, extend assignment response, add integration tests
+
 **Deliverables:**
 - `PUT /api/guest/:guestId/wishlist` endpoint in `index.ts`
 - `GET /api/guest/:guestId/wishlist` endpoint in `index.ts`
