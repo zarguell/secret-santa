@@ -84,6 +84,8 @@ Phases follow architectural dependencies: storage foundation first, then API exp
 
 ### Phase 6 - Client UI Layer
 
+**Status:** Planned (1 plan)
+
 **Goal:** Guest page displays wishlist form with real-time character counter and load/save functionality.
 
 **Dependencies:** Phase 5 (API endpoints)
@@ -101,6 +103,11 @@ Phases follow architectural dependencies: storage foundation first, then API exp
 4. Save button sends POST request to API and shows success/error feedback
 5. UI handles empty wishlist state (no error, displays "No wishlist set" message)
 6. Edge case tests verify Unicode characters, max length enforcement, empty state
+
+**Plans:** 1 plan in 1 wave
+
+**Plan List:**
+- [ ] 06-01-PLAN.md — Add wishlist UI to guest.html, load/save functions to guest.js, and CSS styles to style.css
 
 **Deliverables:**
 - Wishlist form section in `guest.html` (textarea + character counter + save button)
