@@ -15,6 +15,8 @@ Phases follow architectural dependencies: storage foundation first, then API exp
 
 ### Phase 4 - Durable Object Storage Layer
 
+**Status:** ✓ Complete (2026-01-20)
+
 **Goal:** Party Durable Objects can store and retrieve per-guest wishlists with validation.
 
 **Dependencies:** None (extends existing Party DO)
@@ -35,7 +37,7 @@ Phases follow architectural dependencies: storage foundation first, then API exp
 **Plans:** 1 plan in 1 wave
 
 **Plan List:**
-- [ ] 04-01-PLAN.md — Add wishlist types, DO methods (setWishlist/getWishlist), and comprehensive unit tests
+- [x] 04-01-PLAN.md — Add wishlist types, DO methods (setWishlist/getWishlist), and comprehensive unit tests
 
 **Deliverables:**
 - `setWishlist(guestId, text)` and `getWishlist(guestId)` methods in Party class
@@ -164,4 +166,5 @@ Phases follow architectural dependencies: storage foundation first, then API exp
 
 ---
 *Roadmap created: 2026-01-19*
-*Next phase: 4 - Durable Object Storage Layer*
+*Phase 4 completed: 2026-01-20*
+*Next phase: 5 - API Endpoint Layer*

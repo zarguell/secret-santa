@@ -9,10 +9,10 @@ Requirements for v1.1 milestone. Each maps to roadmap phases.
 
 ### Data Storage (STOR)
 
-- [ ] **STOR-01**: Party Durable Object stores wishlists using `wishlists: Record<string, string>` field
-- [ ] **STOR-02**: System uses per-guest storage key pattern `wishlist:{guestId}` for individual wishlists
-- [ ] **STOR-03**: System enforces 500 character limit on wishlist text
-- [ ] **STOR-04**: System handles empty wishlist state (no wishlist set)
+- [x] **STOR-01**: Party Durable Object stores wishlists using `wishlists: Record<string, string>` field
+- [x] **STOR-02**: System uses per-guest storage key pattern `wishlist:{guestId}` for individual wishlists
+- [x] **STOR-03**: System enforces 500 character limit on wishlist text
+- [x] **STOR-04**: System handles empty wishlist state (no wishlist set)
 
 ### API Endpoints (API)
 
@@ -31,7 +31,7 @@ Requirements for v1.1 milestone. Each maps to roadmap phases.
 
 ### Testing (TEST)
 
-- [ ] **TEST-01**: Unit tests cover wishlist storage and retrieval in Party Durable Object
+- [x] **TEST-01**: Unit tests cover wishlist storage and retrieval in Party Durable Object
 - [ ] **TEST-02**: Integration tests cover wishlist API endpoints
 - [ ] **TEST-03**: Tests cover edge cases (empty wishlist, max length, Unicode characters)
 
@@ -72,10 +72,10 @@ Which phases cover which requirements. Updated during roadmap creation.
 
 | Requirement | Phase | Status |
 |-------------|-------|--------|
-| STOR-01 | Phase 4 | Pending |
-| STOR-02 | Phase 4 | Pending |
-| STOR-03 | Phase 4 | Pending |
-| STOR-04 | Phase 4 | Pending |
+| STOR-01 | Phase 4 | Complete |
+| STOR-02 | Phase 4 | Complete |
+| STOR-03 | Phase 4 | Complete |
+| STOR-04 | Phase 4 | Complete |
 | API-01 | Phase 5 | Pending |
 | API-02 | Phase 5 | Pending |
 | API-03 | Phase 5 | Pending |
@@ -85,7 +85,7 @@ Which phases cover which requirements. Updated during roadmap creation.
 | UI-03 | Phase 6 | Pending |
 | UI-04 | Phase 7 | Pending |
 | UI-05 | Phase 7 | Pending |
-| TEST-01 | Phase 4 | Pending |
+| TEST-01 | Phase 4 | Complete |
 | TEST-02 | Phase 5 | Pending |
 | TEST-03 | Phase 6 | Pending |
 
@@ -96,4 +96,4 @@ Which phases cover which requirements. Updated during roadmap creation.
 
 ---
 *Requirements defined: 2026-01-19*
-*Last updated: 2026-01-19 after initial definition*
+*Last updated: 2026-01-20 - Phase 4 requirements marked complete*
