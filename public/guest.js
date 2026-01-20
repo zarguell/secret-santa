@@ -49,8 +49,8 @@ async function loadWishlist() {
       return;
     }
 
-    const text = await response.text();
-    document.getElementById("wishlistText").value = text;
+    const data = await response.json();
+    document.getElementById("wishlistText").value = data.wishlist;
     updateCounter();
   } catch (error) {
     console.error("Error loading wishlist:", error);
