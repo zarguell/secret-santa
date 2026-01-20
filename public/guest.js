@@ -83,9 +83,9 @@ async function saveWishlist() {
       {
         method: "PUT",
         headers: {
-          "Content-Type": "text/plain;charset=UTF-8",
+          "Content-Type": "application/json",
         },
-        body: text,
+        body: JSON.stringify({ wishlist: text }),
       }
     );
 
