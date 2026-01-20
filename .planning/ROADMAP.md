@@ -48,6 +48,8 @@ Phases follow architectural dependencies: storage foundation first, then API exp
 
 ### Phase 5 - API Endpoint Layer
 
+**Status:** ✓ Complete (2026-01-20)
+
 **Goal:** HTTP API exposes wishlist functionality with validation and security.
 
 **Dependencies:** Phase 4 (storage layer)
@@ -69,7 +71,7 @@ Phases follow architectural dependencies: storage foundation first, then API exp
 **Plans:** 1 plan in 1 wave
 
 **Plan List:**
-- [ ] 05-01-PLAN.md — Implement PUT/GET /api/guest/:guestId/wishlist endpoints, extend assignment response, add integration tests
+- [x] 05-01-PLAN.md — Implement PUT/GET /api/guest/:guestId/wishlist endpoints, extend assignment response, add integration tests
 
 **Deliverables:**
 - `PUT /api/guest/:guestId/wishlist` endpoint in `index.ts`
@@ -141,11 +143,11 @@ Phases follow architectural dependencies: storage foundation first, then API exp
 | Phase | Name | Status | Progress |
 |-------|------|--------|----------|
 | 4 | Durable Object Storage Layer | Complete | 100% |
-| 5 | API Endpoint Layer | Not Started | 0% |
+| 5 | API Endpoint Layer | Complete | 100% |
 | 6 | Client UI Layer | Not Started | 0% |
 | 7 | Recipient Wishlist Integration | Not Started | 0% |
 
-**Overall Milestone Progress:** 25% (1/4 phases complete)
+**Overall Milestone Progress:** 50% (2/4 phases complete)
 
 ## Notes
 
@@ -172,4 +174,5 @@ Phases follow architectural dependencies: storage foundation first, then API exp
 ---
 *Roadmap created: 2026-01-19*
 *Phase 4 completed: 2026-01-20*
-*Next phase: 5 - API Endpoint Layer*
+*Phase 5 completed: 2026-01-20*
+*Next phase: 6 - Client UI Layer*

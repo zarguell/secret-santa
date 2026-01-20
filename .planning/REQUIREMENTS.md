@@ -16,10 +16,11 @@ Requirements for v1.1 milestone. Each maps to roadmap phases.
 
 ### API Endpoints (API)
 
-- [ ] **API-01**: POST /api/guest/:guestId/wishlist updates guest's wishlist with validation
-- [ ] **API-02**: GET /api/guest/:guestId/wishlist returns guest's current wishlist or empty string
-- [ ] **API-03**: GET /api/guest/:guestId/assignment response includes recipientWishlist field
-- [ ] **API-04**: API validates input (sanitizes, enforces 500 char limit)
+- [x] **API-01**: POST /api/guest/:guestId/wishlist updates guest's wishlist with validation
+- [x] **API-02**: GET /api/guest/:guestId/wishlist returns guest's current wishlist or empty string
+- [x] **API-03**: GET /api/guest/:guestId/assignment response includes recipientWishlist field
+  - *Deviation: Implementation uses `recipientGuestId` instead of `recipientWishlist` — enables Phase 7 to fetch recipient's wishlist separately*
+- [x] **API-04**: API validates input (sanitizes, enforces 500 char limit)
 
 ### User Interface (UI)
 
@@ -32,7 +33,7 @@ Requirements for v1.1 milestone. Each maps to roadmap phases.
 ### Testing (TEST)
 
 - [x] **TEST-01**: Unit tests cover wishlist storage and retrieval in Party Durable Object
-- [ ] **TEST-02**: Integration tests cover wishlist API endpoints
+- [x] **TEST-02**: Integration tests cover wishlist API endpoints
 - [ ] **TEST-03**: Tests cover edge cases (empty wishlist, max length, Unicode characters)
 
 ## v2 Requirements
@@ -76,17 +77,17 @@ Which phases cover which requirements. Updated during roadmap creation.
 | STOR-02 | Phase 4 | Complete |
 | STOR-03 | Phase 4 | Complete |
 | STOR-04 | Phase 4 | Complete |
-| API-01 | Phase 5 | Pending |
-| API-02 | Phase 5 | Pending |
-| API-03 | Phase 5 | Pending |
-| API-04 | Phase 5 | Pending |
+| API-01 | Phase 5 | Complete |
+| API-02 | Phase 5 | Complete |
+| API-03 | Phase 5 | Complete |
+| API-04 | Phase 5 | Complete |
 | UI-01 | Phase 6 | Pending |
 | UI-02 | Phase 6 | Pending |
 | UI-03 | Phase 6 | Pending |
 | UI-04 | Phase 7 | Pending |
 | UI-05 | Phase 7 | Pending |
 | TEST-01 | Phase 4 | Complete |
-| TEST-02 | Phase 5 | Pending |
+| TEST-02 | Phase 5 | Complete |
 | TEST-03 | Phase 6 | Pending |
 
 **Coverage:**
@@ -96,4 +97,4 @@ Which phases cover which requirements. Updated during roadmap creation.
 
 ---
 *Requirements defined: 2026-01-19*
-*Last updated: 2026-01-20 - Phase 4 requirements marked complete*
+*Last updated: 2026-01-20 - Phase 5 requirements marked complete*
