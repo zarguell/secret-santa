@@ -16,11 +16,11 @@
 
 **Phase:** 6 of 7 (Client UI Layer)
 
-**Plan:** 1 of 1 in current phase
+**Plan:** 2 of 2 in current phase
 
-**Status:** In progress
+**Status:** Phase complete
 
-**Last activity:** 2026-01-20 - Completed 06-01-PLAN.md
+**Last activity:** 2026-01-20 - Completed 06-02-PLAN.md
 
 **Progress Bar:**
 ```
@@ -87,6 +87,12 @@ Overall: [██████░░░░░] 75% (3/4 phases complete)
 - Workaround: Skip affected tests, document limitation
 - Reference: https://developers.cloudflare.com/workers/testing/vitest-integration/known-issues/#isolated-storage
 
+**JSON API integration pattern (2026-01-20):**
+- Frontend sends JSON.stringify({ wishlist: text }) with Content-Type: application/json
+- Frontend parses responses via await response.json() and extracts data.wishlist
+- Matches backend API contract: request.json() and JSON.stringify({ wishlist })
+- Rationale: Proper RESTful JSON API integration, fixed content-type mismatch
+
 ### TODOs
 
 **Completed (Phase 4):**
@@ -102,22 +108,31 @@ Overall: [██████░░░░░] 75% (3/4 phases complete)
 - [x] Write integration tests for wishlist endpoints (16 tests, 32 total API tests)
 - [x] Update CORS headers to include PUT method
 
-**Upcoming (Phases 6-7):**
-- [ ] Plan Phase 6: Client UI Layer
+**Completed (Phase 6):**
+- [x] Plan 06-01: Add wishlist UI to guest page (card, textarea, save button)
+- [x] Plan 06-02: Fix API integration for wishlist load/save (JSON request/response)
+- [x] Wishlist section displays below assignment on guest page
+- [x] Character counter (X/500) updates in real-time with warning at 450+
+- [x] Client-side validation prevents API calls for >500 chars
+- [x] saveWishlist() sends JSON body to PUT endpoint
+- [x] loadWishlist() parses JSON response from GET endpoint
+- [x] Success/error feedback with 3-second auto-clear
+
+**Upcoming (Phase 7):**
 - [ ] Plan Phase 7: Recipient Wishlist Integration
-- [ ] Execute phases 6-7
+- [ ] Execute Phase 7
 
 ### Blockers
 
-None — Phase 5 complete, ready to begin Phase 6.
+None — Phase 6 complete, ready to begin Phase 7.
 
 ### Known Issues
 
-None — v1.0 issues all resolved, wishlist storage and API layers complete. One documented test framework limitation (isolated storage cleanup after DO exceptions).
+None — v1.0 issues all resolved, wishlist storage, API, and UI layers complete. One documented test framework limitation (isolated storage cleanup after DO exceptions).
 
 ## Session Continuity
 
-**Last session:** 2026-01-20 - Completed Phase 6 - Client UI Layer
+**Last session:** 2026-01-20 - Completed Phase 6 - Client UI Layer (2 plans: 06-01, 06-02)
 
 **Next session:** Run `/gsd-plan-phase 7` to create Recipient Wishlist Integration plans
 
@@ -128,6 +143,7 @@ None — v1.0 issues all resolved, wishlist storage and API layers complete. One
 - Guest wishlist loads on page initialization after assignment displayed
 - Success/error feedback with 3-second auto-clear
 - CSS styling matches existing card patterns with responsive design
+- API integration fixed: JSON request/response format matching backend
 - Ready to implement Phase 7: display recipient's wishlist on guest's assignment page
 
 **Commands to continue:**

@@ -85,7 +85,7 @@ Phases follow architectural dependencies: storage foundation first, then API exp
 
 ### Phase 6 - Client UI Layer
 
-**Status:** ◆ In Progress (Gap Closure - 2 gaps found)
+**Status:** ✓ Complete (2026-01-20)
 
 **Goal:** Guest page displays wishlist form with real-time character counter and load/save functionality.
 
@@ -103,11 +103,11 @@ Phases follow architectural dependencies: storage foundation first, then API exp
 4. Save button sends PUT request to API and shows success/error feedback
 5. UI handles empty wishlist state (no error, displays empty textarea)
 
-**Plans:** 2 plans (1 complete, 1 gap closure)
+**Plans:** 2 plans (2 complete)
 
 **Plan List:**
 - [x] 06-01-PLAN.md — Add wishlist UI to guest.html, load/save functions to guest.js, and CSS styles to style.css
-- [ ] 06-02-PLAN.md — Fix API integration mismatches (send JSON body, parse JSON response)
+- [x] 06-02-PLAN.md — Fix API integration mismatches (send JSON body, parse JSON response)
 
 **Deliverables:**
 - Wishlist form section in `guest.html` (textarea + character counter + save button)
