@@ -28,6 +28,105 @@ async function loadAssignment() {
   }
 }
 
+async function loadWishlist() {
+  try {
+    const response = await fetch(
+      `${API_BASE}/api/guest/${guestId}/wishlist`
+    );
+
+    if (response.status === 404) {
+      console.warn("Wishlist not found (guest may not be in party)");
+      return;
+    }
+
+    if (response.status === 429) {
+      console.warn("Too many requests loading wishlist");
+      return;
+    }
+
+    if (!response.ok) {
+      console.error("Failed to load wishlist");
+      return;
+    }
+
+    const text = await response.text();
+    document.getElementById("wishlistText").value = text;
+    updateCounter();
+  } catch (error) {
+    console.error("Error loading wishlist:", error);
+  }
+}
+
+async function saveWishlist() {
+  const textarea = document.getElementById("wishlistText");
+  const messageDiv = document.getElementById("wishlistMessage");
+  const saveBtn = document.getElementById("saveWishlistBtn");
+
+  const text = textarea.value;
+
+  // Client-side validation
+  if (text.length > 500) {
+    messageDiv.textContent = "Wishlist must be 500 characters or less";
+    messageDiv.style.color = "var(--color-error)";
+    messageDiv.classList.remove("hidden");
+    return;
+  }
+
+  // Show loading state
+  saveBtn.disabled = true;
+  saveBtn.textContent = "Saving...";
+  messageDiv.classList.add("hidden");
+
+  try {
+    const response = await fetch(
+      `${API_BASE}/api/guest/${guestId}/wishlist`,
+      {
+        method: "PUT",
+        headers: {
+          "Content-Type": "text/plain;charset=UTF-8",
+        },
+        body: text,
+      }
+    );
+
+    if (!response.ok) {
+      throw new Error(`HTTP ${response.status}`);
+    }
+
+    // Success - show message for 3 seconds
+    messageDiv.textContent = "Wishlist saved!";
+    messageDiv.style.color = "var(--color-success)";
+    messageDiv.classList.remove("hidden");
+
+    setTimeout(() => {
+      messageDiv.classList.add("hidden");
+    }, 3000);
+  } catch (error) {
+    console.error("Error saving wishlist:", error);
+    messageDiv.textContent = "Failed to save. Please try again.";
+    messageDiv.style.color = "var(--color-error)";
+    messageDiv.classList.remove("hidden");
+  } finally {
+    saveBtn.disabled = false;
+    saveBtn.textContent = "Save Wishlist";
+  }
+}
+
+function updateCounter() {
+  const textarea = document.getElementById("wishlistText");
+  const counter = document.getElementById("charCounter");
+  const length = textarea.value.length;
+
+  counter.textContent = `${length}/500`;
+
+  // Color warning when approaching limit
+  if (length > 450) {
+    counter.style.color = "var(--color-error)";
+  } else {
+    counter.style.color = "var(--color-text-light)";
+  }
+}
+
 function displayAssignment(data) {
   document.getElementById("loading").classList.add("hidden");
   document.getElementById("assignment").classList.remove("hidden");
@@ -39,6 +138,9 @@ function displayAssignment(data) {
     data.party.budget || "Not specified";
   document.getElementById("criteria").textContent =
     data.party.criteria || "Surprise them!";
+
+  // Load wishlist after displaying assignment
+  loadWishlist();
 }
 
 function showError(message) {
@@ -47,6 +149,12 @@ function showError(message) {
   document.getElementById("errorMessage").textContent = message;
   errorDiv.classList.remove("hidden");
 }
+
+// Event listeners for wishlist
+document.getElementById("wishlistText").addEventListener("input", updateCounter);
+document
+  .getElementById("saveWishlistBtn")
+  .addEventListener("click", saveWishlist);
 
 // Load assignment on page load
 loadAssignment();
