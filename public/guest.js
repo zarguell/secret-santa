@@ -112,6 +112,46 @@ async function saveWishlist() {
   }
 }
 
+async function loadRecipientWishlist(recipientGuestId) {
+  try {
+    const response = await fetch(
+      `${API_BASE}/api/guest/${recipientGuestId}/wishlist`
+    );
+
+    if (response.status === 404) {
+      document.getElementById("recipient-wishlist-text").textContent =
+        "No wishlist set";
+      return;
+    }
+
+    if (response.status === 429) {
+      document.getElementById("recipient-wishlist-text").textContent =
+        "Too many requests";
+      return;
+    }
+
+    if (!response.ok) {
+      console.error("Failed to load recipient wishlist");
+      document.getElementById("recipient-wishlist-text").textContent =
+        "Could not load wishlist";
+      return;
+    }
+
+    const data = await response.json();
+
+    if (data.wishlist === "") {
+      document.getElementById("recipient-wishlist-text").textContent =
+        "No wishlist set";
+    } else {
+      document.getElementById("recipient-wishlist-text").textContent = data.wishlist;
+    }
+  } catch (error) {
+    console.error("Error loading recipient wishlist:", error);
+    document.getElementById("recipient-wishlist-text").textContent =
+      "Could not load wishlist";
+  }
+}
+
 function updateCounter() {
   const textarea = document.getElementById("wishlistText");
   const counter = document.getElementById("charCounter");
@@ -141,6 +181,12 @@ function displayAssignment(data) {
 
   // Load wishlist after displaying assignment
   loadWishlist();
+
+  // Load recipient's wishlist if available
+  if (data.recipientGuestId) {
+    document.getElementById("recipient-wishlist-section").classList.remove("hidden");
+    loadRecipientWishlist(data.recipientGuestId);
+  }
 }
 
 function showError(message) {
