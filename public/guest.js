@@ -145,7 +145,13 @@ async function loadRecipientWishlist(recipientGuestId) {
     if (data.wishlist === "") {
       wishlistElement.textContent = "No wishlist set";
     } else {
-      wishlistElement.textContent = data.wishlist;
+      // Convert newlines to <br> tags for HTML display
+      const formattedWishlist = data.wishlist
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/\n/g, "<br>");
+      wishlistElement.innerHTML = formattedWishlist;
     }
   } catch (error) {
     console.error("Error loading recipient wishlist:", error);
