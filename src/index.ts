@@ -342,6 +342,13 @@ export default {
             </div>
           </div>
 
+          <div id="recipient-wishlist-section" class="hidden">
+            <div class="card">
+              <h3>🎁 Recipient's Wishlist</h3>
+              <p id="recipient-wishlist-text">Loading...</p>
+            </div>
+          </div>
+
           <div class="wishlist-section">
             <h3>🎁 My Wishlist</h3>
             <textarea
