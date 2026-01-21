@@ -86,7 +86,7 @@ Write comprehensive tests for utility functions (src/utils.ts), KV operations (s
 - [ ] Test CORS handling
   - [ ] OPTIONS request returns correct headers
   - [ ] All endpoints include CORS headers
-  - [ ] CORS allows all origins (*)
+  - [ ] CORS allows all origins (\*)
 
 - [ ] Test error handling
   - [ ] Invalid JSON in request body

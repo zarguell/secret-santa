@@ -14,6 +14,7 @@ Comprehensive test coverage written for utility functions, KV operations, and al
 **Tests Created:**
 
 **1. Utility Functions (`tests/utils.test.ts`)**
+
 - `generateAssignments` function thoroughly tested:
   - Valid assignments: 2, 3, 5, 10 guests - proper shuffling, no self-assignment
   - Edge cases: minimum 2 guests, maximum 50 guests
@@ -22,6 +23,7 @@ Comprehensive test coverage written for utility functions, KV operations, and al
 - **5 tests passing**
 
 **2. KV Operations (`tests/kv.test.ts`)**
+
 - `storeGuestMappings` tested:
   - Stores all mappings correctly to KV
   - Correct key format (guest:guestId)
@@ -35,6 +37,7 @@ Comprehensive test coverage written for utility functions, KV operations, and al
 - **5 tests passing**
 
 **3. API Endpoints (`tests/api.test.ts`)**
+
 - `POST /api/parties`:
   - Valid request: creates party, returns correct structure
   - Returns partyId, guestUrls with correct format
@@ -94,4 +97,5 @@ None - all tests passing on first run
 ## Next Steps
 
 Phase 1 continues with Durable Objects testing:
+
 - 01-03: Write tests for Durable Objects behavior

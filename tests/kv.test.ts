@@ -18,7 +18,9 @@ describe("KV Functions", () => {
 
       await storeGuestMappings(env.GUEST_KV, guestMappings, partyId);
 
-      const aliceMapping = await env.GUEST_KV.get(`guest:${guestMappings[0].guestId}`);
+      const aliceMapping = await env.GUEST_KV.get(
+        `guest:${guestMappings[0].guestId}`,
+      );
       expect(aliceMapping).toBeTruthy();
 
       const parsed = JSON.parse(aliceMapping!);

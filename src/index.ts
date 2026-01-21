@@ -278,7 +278,7 @@ export default {
           // Try to fetch from assets first
           if (env.ASSETS && typeof env.ASSETS.fetch === "function") {
             const assetResponse = await env.ASSETS.fetch(
-              new Request("http://localhost/guest.html")
+              new Request("http://localhost/guest.html"),
             );
             return assetResponse;
           } else {
@@ -395,10 +395,7 @@ export default {
       }
 
       // ============= VALIDATE GUEST ID FORMAT =============
-      if (
-        url.pathname.match(/^\/guest\//) &&
-        request.method === "GET"
-      ) {
+      if (url.pathname.match(/^\/guest\//) && request.method === "GET") {
         const guestId = url.pathname.split("/")[2];
 
         if (!guestId || guestId.length !== 36) {
