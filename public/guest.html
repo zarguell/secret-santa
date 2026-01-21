@@ -58,6 +58,29 @@
             </div>
           </div>
 
+          <div id="recipient-wishlist-section" class="hidden">
+            <div class="card">
+              <h3>🎁 Recipient's Wishlist</h3>
+              <p id="recipient-wishlist-text">Loading...</p>
+            </div>
+          </div>
+
+          <div class="wishlist-section">
+            <h3>🎁 My Wishlist</h3>
+            <textarea
+              id="wishlistText"
+              placeholder="What would you like for Christmas?"
+              rows="4"
+            ></textarea>
+            <div class="wishlist-actions">
+              <span id="charCounter" class="char-counter">0/500</span>
+            </div>
+            <button id="saveWishlistBtn" class="btn-primary">
+              Save Wishlist
+            </button>
+            <div id="wishlistMessage" class="hint hidden"></div>
+          </div>
+
           <div class="reminder">
             <span class="reminder-icon">🤫</span>
             <p>Remember: Keep it secret, keep it festive!</p>

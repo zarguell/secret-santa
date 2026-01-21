@@ -15,7 +15,7 @@ export default {
     // CORS headers
     const corsHeaders = {
       "Access-Control-Allow-Origin": "*",
-      "Access-Control-Allow-Methods": "GET, POST, OPTIONS",
+      "Access-Control-Allow-Methods": "GET, POST, PUT, OPTIONS",
       "Access-Control-Allow-Headers": "Content-Type",
     };
 
@@ -142,7 +142,104 @@ export default {
           );
           const result = await partyStub.getGuestAssignment(guestId);
 
-          return new Response(JSON.stringify(result), {
+          // Get party data to look up recipient's guestId
+          const partyData = await partyStub.getParty();
+          const recipientGuestId = partyData.guestLinks[result.assignment];
+
+          // Add recipientGuestId to response
+          const responseWithRecipient = {
+            ...result,
+            recipientGuestId,
+          };
+
+          return new Response(JSON.stringify(responseWithRecipient), {
+            headers: { ...corsHeaders, "Content-Type": "application/json" },
+          });
+        } catch (error) {
+          return new Response(JSON.stringify({ error: error.message }), {
+            status: 500,
+            headers: { ...corsHeaders, "Content-Type": "application/json" },
+          });
+        }
+      }
+
+      // ============= PUT GUEST WISHLIST =============
+      if (
+        url.pathname.match(/^\/api\/guest\/[a-f0-9-]+\/wishlist$/) &&
+        request.method === "PUT"
+      ) {
+        const guestId = url.pathname.split("/")[3];
+
+        if (!guestId || guestId.length !== 36) {
+          return new Response(JSON.stringify({ error: "Invalid guest ID" }), {
+            status: 400,
+            headers: { ...corsHeaders, "Content-Type": "application/json" },
+          });
+        }
+
+        const mapping = await getGuestMapping(env.GUEST_KV, guestId);
+
+        if (!mapping) {
+          return new Response(
+            JSON.stringify({ error: "Guest link not found" }),
+            {
+              status: 404,
+              headers: { ...corsHeaders, "Content-Type": "application/json" },
+            },
+          );
+        }
+
+        try {
+          const body = (await request.json()) as { wishlist: string };
+          const partyStub = env.PARTY_DO.get(
+            env.PARTY_DO.idFromString(mapping.partyId),
+          );
+          await partyStub.setWishlist(guestId, body.wishlist);
+
+          return new Response(JSON.stringify({ success: true }), {
+            headers: { ...corsHeaders, "Content-Type": "application/json" },
+          });
+        } catch (error) {
+          return new Response(JSON.stringify({ error: error.message }), {
+            status: 500,
+            headers: { ...corsHeaders, "Content-Type": "application/json" },
+          });
+        }
+      }
+
+      // ============= GET GUEST WISHLIST =============
+      if (
+        url.pathname.match(/^\/api\/guest\/[a-f0-9-]+\/wishlist$/) &&
+        request.method === "GET"
+      ) {
+        const guestId = url.pathname.split("/")[3];
+
+        if (!guestId || guestId.length !== 36) {
+          return new Response(JSON.stringify({ error: "Invalid guest ID" }), {
+            status: 400,
+            headers: { ...corsHeaders, "Content-Type": "application/json" },
+          });
+        }
+
+        const mapping = await getGuestMapping(env.GUEST_KV, guestId);
+
+        if (!mapping) {
+          return new Response(
+            JSON.stringify({ error: "Guest link not found" }),
+            {
+              status: 404,
+              headers: { ...corsHeaders, "Content-Type": "application/json" },
+            },
+          );
+        }
+
+        try {
+          const partyStub = env.PARTY_DO.get(
+            env.PARTY_DO.idFromString(mapping.partyId),
+          );
+          const wishlist = await partyStub.getWishlist(guestId);
+
+          return new Response(JSON.stringify({ wishlist }), {
             headers: { ...corsHeaders, "Content-Type": "application/json" },
           });
         } catch (error) {
@@ -237,6 +334,29 @@ export default {
                 <span class="info-value" id="criteria"></span>
               </div>
             </div>
+          </div>
+
+          <div id="recipient-wishlist-section" class="hidden">
+            <div class="card">
+              <h3>🎁 Recipient's Wishlist</h3>
+              <p id="recipient-wishlist-text">Loading...</p>
+            </div>
+          </div>
+
+          <div class="wishlist-section">
+            <h3>🎁 My Wishlist</h3>
+            <textarea
+              id="wishlistText"
+              placeholder="What would you like for Christmas?"
+              rows="4"
+            ></textarea>
+            <div class="wishlist-actions">
+              <span id="charCounter" class="char-counter">0/500</span>
+            </div>
+            <button id="saveWishlistBtn" class="btn-primary">
+              Save Wishlist
+            </button>
+            <div id="wishlistMessage" class="hint hidden"></div>
           </div>
 
           <div class="reminder">

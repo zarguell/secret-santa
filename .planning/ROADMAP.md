@@ -1,71 +1,213 @@
-# Roadmap: Secret Santa Application
+# Roadmap: Secret Santa v1.1 Wishlist Feature
+
+**Milestone:** v1.1 Wishlist Feature
+**Created:** 2026-01-19
+**Phases:** 4 (Storage → API → UI → Recipient Integration)
+**Depth:** Quick
+**Plans:** 4 total (04-01, 05-01, 06-01, 07-01)
 
 ## Overview
 
-Transform the current Secret Santa application from a functional but untested system with workarounds into a robust, tested, and properly structured serverless application. The journey establishes comprehensive test coverage, fixes the static file serving architecture, and creates a reliable development workflow for iterative improvements.
+This roadmap delivers wishlist functionality for the Secret Santa application, enabling guests to create and manage wishlists (max 500 characters) and view their assigned recipient's wishlist. The feature extends the existing Cloudflare Workers + Durable Objects architecture without new infrastructure, following the established three-layer pattern (Storage → API → UI).
 
-## Domain Expertise
-
-None
+Phases follow architectural dependencies: storage foundation first, then API exposure, then user interface, and finally recipient wishlist integration. Each phase delivers complete, testable functionality before proceeding to the next.
 
 ## Phases
 
-**Phase Numbering:**
+### Phase 4 - Durable Object Storage Layer
 
-- Integer phases (1, 2, 3): Planned milestone work
-- Decimal phases (2.1, 2.2): Urgent insertions (marked with INSERTED)
+**Status:** ✓ Complete (2026-01-20)
 
-Decimal phases appear between their surrounding integers in numeric order.
+**Goal:** Party Durable Objects can store and retrieve per-guest wishlists with validation.
 
-- [x] **Phase 1: Testing Foundation** - Set up Vitest and write comprehensive tests
-- [ ] **Phase 2: Static File Serving** - Fix HTML serving to remove inline workaround
-- [ ] **Phase 3: Development Workflow** - Establish dev branch deployment workflow
+**Dependencies:** None (extends existing Party DO)
 
-## Phase Details
+**Requirements:**
 
-### Phase 1: Testing Foundation
+- STOR-01: Party Durable Object stores wishlists using `wishlists: Record<string, string>` field
+- STOR-02: System uses per-guest storage key pattern `wishlist:{guestId}` for individual wishlists
+- STOR-03: System enforces 500 character limit on wishlist text
+- STOR-04: System handles empty wishlist state (no wishlist set)
+- TEST-01: Unit tests cover wishlist storage and retrieval in Party Durable Object
 
-**Goal**: Establish comprehensive test coverage for all code paths
-**Depends on**: Nothing (first phase)
-**Research**: Likely (Vitest + Cloudflare Workers integration, Durable Objects testing patterns)
-**Research topics**: Vitest configuration for Workers, testing utilities, DO mocking/stubbing approaches
-**Plans**: 3 plans
+**Success Criteria:**
 
-Plans:
+1. Party Durable Object stores wishlist text for a guest ID and retrieves it correctly
+2. System rejects wishlist updates exceeding 500 characters with clear error
+3. System returns empty string when no wishlist exists for a guest (not null/undefined)
+4. Unit tests verify storage/retrieval, validation, and empty state handling
 
-- [ ] 01-01: Set up Vitest with Cloudflare Workers compatibility
-- [ ] 01-02: Write tests for utility functions and API endpoints
-- [ ] 01-03: Write tests for Durable Objects behavior
+**Plans:** 1 plan in 1 wave
 
-### Phase 2: Static File Serving
+**Plan List:**
 
-**Goal**: Implement proper static HTML serving, removing inline workaround
-**Depends on**: Phase 1 (tests validate the fix works)
-**Research**: Unlikely (internal Cloudflare Workers configuration)
-**Plans**: 1 plan
+- [x] 04-01-PLAN.md — Add wishlist types, DO methods (setWishlist/getWishlist), and comprehensive unit tests
 
-Plans:
+**Deliverables:**
 
-- [ ] 02-01: Implement static file serving for guest pages
+- `setWishlist(guestId, text)` and `getWishlist(guestId)` methods in Party class
+- Validation logic (500 char limit, guest exists in party)
+- Unit tests for all DO wishlist methods (10 test cases)
 
-### Phase 3: Development Workflow
+---
 
-**Goal**: Establish and test single dev branch workflow for iterative development
-**Depends on**: Phase 2 (core functionality stable)
-**Research**: Unlikely (standard git workflow and deployment patterns)
-**Plans**: 1 plan
+### Phase 5 - API Endpoint Layer
 
-Plans:
+**Status:** ✓ Complete (2026-01-20)
 
-- [ ] 03-01: Implement and validate dev branch deployment workflow
+**Goal:** HTTP API exposes wishlist functionality with validation and security.
+
+**Dependencies:** Phase 4 (storage layer)
+
+**Requirements:**
+
+- API-01: PUT /api/guest/:guestId/wishlist updates guest's wishlist with validation
+- API-02: GET /api/guest/:guestId/wishlist returns guest's current wishlist or empty string
+- API-03: GET /api/guest/:guestId/assignment response includes recipientWishlist field
+- API-04: API validates input (sanitizes, enforces 500 char limit)
+- TEST-02: Integration tests cover wishlist API endpoints
+
+**Success Criteria:**
+
+1. Client can PUT wishlist text and receive 200 OK on success
+2. Client can GET wishlist text and receive current content or empty string
+3. API returns 400 Bad Request for invalid input (non-string, exceeds 500 chars)
+4. API validates guest ID exists in party before processing request
+5. Integration tests verify endpoints handle valid and invalid requests
+
+**Plans:** 1 plan in 1 wave
+
+**Plan List:**
+
+- [x] 05-01-PLAN.md — Implement PUT/GET /api/guest/:guestId/wishlist endpoints, extend assignment response, add integration tests
+
+**Deliverables:**
+
+- `PUT /api/guest/:guestId/wishlist` endpoint in `index.ts`
+- `GET /api/guest/:guestId/wishlist` endpoint in `index.ts`
+- KV lookup → DO stub → method call wiring
+- Input validation and error handling
+- Integration tests for all endpoints
+
+---
+
+### Phase 6 - Client UI Layer
+
+**Status:** ✓ Complete (2026-01-20)
+
+**Goal:** Guest page displays wishlist form with real-time character counter and load/save functionality.
+
+**Dependencies:** Phase 5 (API endpoints)
+
+**Requirements:**
+
+- UI-01: Guest page displays "My Wishlist" section with textarea form
+- UI-02: Character counter displays current length / 500 as user types
+- UI-03: Guest page loads and displays guest's current wishlist on page load
+
+**Success Criteria:**
+
+1. Guest sees "My Wishlist" section with textarea and character counter when loading their link
+2. Character counter updates in real-time as user types (X/500)
+3. Page loads and displays user's current wishlist text on initialization
+4. Save button sends PUT request to API and shows success/error feedback
+5. UI handles empty wishlist state (no error, displays empty textarea)
+
+**Plans:** 2 plans (2 complete)
+
+**Plan List:**
+
+- [x] 06-01-PLAN.md — Add wishlist UI to guest.html, load/save functions to guest.js, and CSS styles to style.css
+- [x] 06-02-PLAN.md — Fix API integration mismatches (send JSON body, parse JSON response)
+
+**Deliverables:**
+
+- Wishlist form section in `guest.html` (textarea + character counter + save button)
+- `loadWishlist()`, `saveWishlist()`, and `updateCounter()` functions in `guest.js`
+- Character counter event listener with color warning
+- Error handling and user feedback (3-second auto-clear)
+- CSS styles for form elements matching existing card patterns
+- JSON request/response format matching backend API contract
+
+---
+
+### Phase 7 - Recipient Wishlist Integration
+
+**Status:** ✓ Complete (2026-01-21)
+
+**Goal:** Guests can view their assigned recipient's wishlist on the assignment page.
+
+**Dependencies:** Phase 6 (client UI layer)
+
+**Requirements:**
+
+- UI-04: Assignment view displays "Recipient's Wishlist" section
+- UI-05: UI handles empty wishlist state (no wishlist set message)
+
+**Success Criteria:**
+
+1. Assignment page includes "Recipient's Wishlist" section below assignment details ✓
+2. Section displays recipient's wishlist text if set ✓
+3. Section shows "No wishlist set" message if recipient hasn't created one ✓
+4. Client fetches recipient wishlist using recipientGuestId from assignment response ✓
+5. End-to-end test verifies: guest views assignment → sees recipient's wishlist (or empty state) ✓
+
+**Plans:** 1 plan in 1 wave
+
+**Plan List:**
+
+- [x] 07-01-PLAN.md — Add recipient wishlist section to guest.html, loadRecipientWishlist() function to guest.js, and end-to-end test
+
+**Deliverables:**
+
+- `GET /api/guest/:recipientGuestId/wishlist` endpoint (already exists from Phase 5)
+- "Recipient's Wishlist" section in `guest.html` with proper card styling ✓
+- `loadRecipientWishlist()` function in `guest.js` with JSON parsing and error handling ✓
+- Empty state handling ("No wishlist set" message) ✓
+- Integration tests covering both states (wishlist set and empty) ✓
+
+---
 
 ## Progress
 
-**Execution Order:**
-Phases execute in numeric order: 1 → 2 → 3
+| Phase | Name                           | Status   | Progress |
+| ----- | ------------------------------ | -------- | -------- |
+| 4     | Durable Object Storage Layer   | Complete | 100%     |
+| 5     | API Endpoint Layer             | Complete | 100%     |
+| 6     | Client UI Layer                | Complete | 100%     |
+| 7     | Recipient Wishlist Integration | Complete | 100%     |
 
-| Phase                   | Plans Complete | Status   | Completed  |
-| ----------------------- | -------------- | -------- | ---------- |
-| 1. Testing Foundation   | 3/3            | Complete | 2026-01-17 |
-| 2. Static File Serving  | 1/1            | Complete | 2026-01-17 |
-| 3. Development Workflow | 1/1            | Complete | 2026-01-17 |
+**Overall Milestone Progress:** 100% (4/4 phases complete)
+
+## Notes
+
+**Starting phase number:** 4 (continuing from v1.0 milestone)
+
+**Depth calibration:** "Quick" depth applied — 4 phases follow natural architectural boundaries (Storage → API → UI → Recipient). No artificial compression needed as phases are already minimal and coherent.
+
+**Research alignment:** All phases align with research recommendations from `research/SUMMARY.md`. No research phases needed — all patterns are established in existing codebase.
+
+**Testing strategy:** Tests are embedded within phases (unit tests in Phase 4, integration tests in Phase 5, edge case tests in Phase 6) to ensure each layer is validated before building dependent layers.
+
+**Key architectural decisions:**
+
+- Per-guest keys (`wishlist:${guestId}`) in Party DO — simpler than SQL for flat string data
+- Security via guest ID ownership — anyone with link can edit (matches v1.0 pattern)
+- Client-side fetch for recipient wishlist — keeps assignment response lightweight
+
+**Avoided pitfalls:**
+
+- Race conditions: Durable Object input gates handle automatically
+- Input validation failures: Enforced at API boundary
+- DO overload: Lightweight operations, no external I/O
+- Authorization: Guest membership verified in party
+- Migration: Optional chaining for missing data
+
+---
+
+_Roadmap created: 2026-01-19_
+_Phase 4 completed: 2026-01-20_
+_Phase 5 completed: 2026-01-20_
+_Phase 6 completed: 2026-01-20_
+_Phase 7 completed: 2026-01-21_
+_Milestone v1.1 Wishlist Feature: 100% complete_

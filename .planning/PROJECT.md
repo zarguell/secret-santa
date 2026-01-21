@@ -2,7 +2,16 @@
 
 ## What This Is
 
-A serverless Secret Santa application built on Cloudflare Workers. Party organizers create events and get shareable links for guests to view their gift recipient assignments. Currently uses inline HTML as a workaround for static file serving issues.
+A serverless Secret Santa application built on Cloudflare Workers. Party organizers create events and get shareable links for guests to view their gift recipient assignments. Features comprehensive test coverage, proper static file serving, and reliable edge deployment.
+
+## Current State
+
+**Version:** v1.1 Wishlist Feature (in progress)
+**Architecture:** Cloudflare Workers + Durable Objects + KV
+**Test Coverage:** 31 tests passing with Vitest
+**Lines of Code:** 531 TypeScript
+
+The application has been transformed from functional but untested to a robust, tested serverless application with proper static file serving and a reliable development workflow. Now adding wishlist functionality to improve guest experience.
 
 ## Core Value
 
@@ -14,41 +23,45 @@ Every guest must be able to reliably view their Secret Santa assignment from the
 
 <!-- Shipped and confirmed valuable. -->
 
-- ✓ Party creation — existing
-- ✓ Guest assignment generation (no self-assignment) — existing
-- ✓ Guest ID to party ID mapping via KV — existing
-- ✓ Durable Object stateful party storage — existing
+- ✓ Party creation — v1.0
+- ✓ Guest assignment generation (no self-assignment) — v1.0
+- ✓ Guest ID to party ID mapping via KV — v1.0
+- ✓ Durable Object stateful party storage — v1.0
+- ✓ Full test coverage (utils, API, Durable Objects) using Vitest — v1.0
+- ✓ Static HTML serving for guest pages (inline workaround removed) — v1.0
+- ✓ Single dev branch workflow for iterative development and deployment testing — v1.0
 
 ### Active
 
 <!-- Current scope. Building toward these. -->
 
-- [x] Full test coverage (utils, API, Durable Objects) using Vitest — 31 tests passing
-- [ ] Fix static HTML serving for guest pages (remove inline HTML workaround)
-- [ ] Single dev branch workflow for iterative development and deployment testing
+- [ ] Wishlist storage in Durable Objects — v1.1
+- [ ] Guest can view/edit their own wishlist (~500 chars) — v1.1
+- [ ] Guest can view their assigned recipient's wishlist — v1.1
+- [ ] UI updates to guest.html for wishlist forms — v1.1
+- [ ] Test coverage for wishlist features — v1.1
 
 ### Out of Scope
 
 <!-- Explicit boundaries. Includes reasoning to prevent re-adding. -->
 
 - Email notifications — v1 focuses on link-based access only
-- Wish lists and gift tracking — out of scope for initial goals
-- Party editing or guest management — out of scope for initial goals
+- Party editing or guest management — out of scope for current goals
+- Complex wishlist features (structured items, images, etc.) — keeping v1.1 simple with freeform text
 
 ## Context
 
-**Existing Implementation:**
+**Shipped Implementation:**
 
 - Single Cloudflare Worker handling all HTTP requests
 - Durable Objects for stateful party storage
 - KV namespace for fast guest ID lookups
-- Guest assignment viewing uses inline HTML workaround (src/index.ts:181) due to static file serving issues
+- Static guest.html page served properly (inline workaround removed)
+- 31 passing tests with Vitest and @cloudflare/vitest-pool-workers
+- Dev branch deployment workflow for iterative development
 
 **Known Issues:**
-
-- Static guest.html page not being served properly from Cloudflare Workers
-- No test coverage currently exists
-- All code paths need validation
+None — all v1.0 issues resolved
 
 ## Constraints
 
@@ -62,9 +75,9 @@ Every guest must be able to reliably view their Secret Santa assignment from the
 | Decision                                            | Rationale                                                                  | Outcome                                            |
 | --------------------------------------------------- | -------------------------------------------------------------------------- | -------------------------------------------------- |
 | Vitest for testing                                  | Fast, modern, Cloudflare Workers compatible                                | ✓ Implemented with @cloudflare/vitest-pool-workers |
-| Single dev branch                                   | Simplify workflow while iterating on static file fix and tests             | — Pending                                          |
-| Static HTML serving priority over feature additions | Core value is reliable guest assignment viewing, inline HTML is workaround | — Pending                                          |
+| Single dev branch                                   | Simplify workflow while iterating on static file fix and tests             | ✓ Implemented                                      |
+| Static HTML serving priority over feature additions | Core value is reliable guest assignment viewing, inline HTML is workaround | ✓ Implemented                                      |
 
 ---
 
-_Last updated: 2026-01-17 after initialization_
+_Last updated: 2026-01-19 after v1.1 milestone start_

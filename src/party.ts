@@ -130,4 +130,47 @@ export class Party extends DurableObject {
 
     return partyData;
   }
+
+  // Set wishlist for a guest
+  async setWishlist(
+    guestId: string,
+    wishlist: string,
+  ): Promise<{ success: boolean }> {
+    const partyData = await this.ctx.storage.get<PartyData>("party");
+
+    if (!partyData) {
+      throw new Error("Party not found");
+    }
+
+    // Verify guest exists in this party
+    const guestExists = Object.entries(partyData.guestLinks).some(
+      ([_, id]) => id === guestId,
+    );
+
+    if (!guestExists) {
+      throw new Error("Guest not found in this party");
+    }
+
+    // Validate input
+    if (typeof wishlist !== "string") {
+      throw new Error("Wishlist must be a string");
+    }
+
+    if (wishlist.length > 500) {
+      throw new Error("Wishlist must be 500 characters or less");
+    }
+
+    // Store using per-guest key pattern
+    await this.ctx.storage.put(`wishlist:${guestId}`, wishlist);
+
+    return { success: true };
+  }
+
+  // Get wishlist for a guest
+  async getWishlist(guestId: string): Promise<string> {
+    const wishlist = await this.ctx.storage.get<string>(`wishlist:${guestId}`);
+
+    // Return empty string for missing wishlists (not null/undefined)
+    return wishlist || "";
+  }
 }
