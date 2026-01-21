@@ -121,6 +121,8 @@ Phases follow architectural dependencies: storage foundation first, then API exp
 
 ### Phase 7 - Recipient Wishlist Integration
 
+**Status:** Planned (2026-01-20)
+
 **Goal:** Guests can view their assigned recipient's wishlist on the assignment page.
 
 **Dependencies:** Phase 6 (client UI layer)
@@ -136,12 +138,17 @@ Phases follow architectural dependencies: storage foundation first, then API exp
 4. Client fetches recipient wishlist using recipientGuestId from assignment response
 5. End-to-end test verifies: guest views assignment → sees recipient's wishlist (or empty state)
 
+**Plans:** 1 plan in 1 wave
+
+**Plan List:**
+- [ ] 07-01-PLAN.md — Add recipient wishlist section to guest.html, loadRecipientWishlist() function to guest.js, and end-to-end test
+
 **Deliverables:**
-- Modify `GET /api/guest/:guestId/assignment` to include `recipientGuestId` in response
-- Add "Recipient's Wishlist" section in `guest.html`
-- Client-side fetch of recipient wishlist using `recipientGuestId`
-- Empty state handling and messaging
-- End-to-end test
+- `GET /api/guest/:recipientGuestId/wishlist` endpoint (already exists from Phase 5)
+- "Recipient's Wishlist" section in `guest.html` with proper card styling
+- `loadRecipientWishlist()` function in `guest.js` with JSON parsing and error handling
+- Empty state handling ("No wishlist set" message)
+- End-to-end test covering both states (wishlist set and empty)
 
 ---
 
@@ -152,9 +159,9 @@ Phases follow architectural dependencies: storage foundation first, then API exp
 | 4 | Durable Object Storage Layer | Complete | 100% |
 | 5 | API Endpoint Layer | Complete | 100% |
 | 6 | Client UI Layer | Complete | 100% |
-| 7 | Recipient Wishlist Integration | Not Started | 0% |
+| 7 | Recipient Wishlist Integration | Planned | 0% |
 
-**Overall Milestone Progress:** 75% (3/4 phases complete)
+**Overall Milestone Progress:** 75% (3/4 phases complete, 1 planned)
 
 ## Notes
 
