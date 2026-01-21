@@ -629,6 +629,32 @@ button {
   transition: color 0.3s ease;
 }
 
+/* Recipient Wishlist Section */
+#recipient-wishlist-section {
+  background: rgba(255, 255, 255, 0.95);
+  border-radius: 12px;
+  padding: 30px;
+  margin-bottom: 24px;
+  color: var(--color-text);
+}
+
+#recipient-wishlist-section .card {
+  background: transparent;
+  box-shadow: none;
+  padding: 0;
+}
+
+#recipient-wishlist-section h3 {
+  text-align: center;
+  margin-bottom: 24px;
+  color: var(--color-secondary);
+}
+
+#recipient-wishlist-text {
+  line-height: 1.6;
+  margin: 0;
+}
+
 
 /* Footer */
 footer {
