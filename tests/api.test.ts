@@ -470,8 +470,8 @@ describe("API Endpoints", () => {
       const response = await worker.fetch(request, env, {} as ExecutionContext);
       const data = await response.json();
 
-      expect(response.status).toBe(404);
-      expect(data.error).toContain("not found");
+      expect(response.status).toBe(400);
+      expect(data.error).toContain("Invalid guest ID");
     });
 
     it("should include CORS headers", async () => {
@@ -481,6 +481,122 @@ describe("API Endpoints", () => {
 
       expect(response.headers.get("Access-Control-Allow-Origin")).toBe("*");
       expect(response.headers.get("Access-Control-Allow-Methods")).toBe("GET, POST, PUT, OPTIONS");
+    });
+  });
+
+  describe("Recipient Wishlist Integration", () => {
+    let aliceId: string;
+    let bobId: string;
+    let charlieId: string;
+    let recipientGuestId: string;
+    const recipientWishlist = "Books, gadgets, and coffee\n\nSomething warm for winter";
+
+    beforeEach(async () => {
+      // Create party with 3 guests
+      const createRequest = new Request("http://localhost/api/parties", {
+        method: "POST",
+        body: JSON.stringify({
+          name: "Test Party",
+          guests: ["Alice", "Bob", "Charlie"],
+        }),
+      });
+
+      const createResponse = await worker.fetch(
+        createRequest,
+        env,
+        {} as ExecutionContext
+      );
+      const createData = await createResponse.json<{
+        guestUrls: { [key: string]: string };
+      }>();
+
+      // Extract guest IDs from URLs
+      const aliceUrl = createData.guestUrls.Alice;
+      const bobUrl = createData.guestUrls.Bob;
+      const charlieUrl = createData.guestUrls.Charlie;
+
+      aliceId = aliceUrl.split("/").pop() || "";
+      bobId = bobUrl.split("/").pop() || "";
+      charlieId = charlieUrl.split("/").pop() || "";
+
+      // Set wishlist for Bob (will be someone's recipient)
+      const wishlistRequest = new Request(
+        `http://localhost/api/guest/${bobId}/wishlist`,
+        {
+          method: "PUT",
+          body: JSON.stringify({ wishlist: recipientWishlist }),
+        }
+      );
+      await worker.fetch(wishlistRequest, env, {} as ExecutionContext);
+    });
+
+    it("should fetch recipient wishlist using recipientGuestId from assignment", async () => {
+      // Get assignment for Alice - Secret Santa assignment is random, so we just verify it returns a valid recipientGuestId
+      const assignmentRequest = new Request(
+        `http://localhost/api/guest/${aliceId}/assignment`
+      );
+      const assignmentResponse = await worker.fetch(
+        assignmentRequest,
+        env,
+        {} as ExecutionContext
+      );
+      const assignmentData = await assignmentResponse.json<{
+        recipientGuestId: string;
+        assignment: string;
+      }>();
+
+      expect(assignmentResponse.status).toBe(200);
+      expect(assignmentData.recipientGuestId).toBeTruthy();
+      expect(typeof assignmentData.recipientGuestId).toBe("string");
+      expect(assignmentData.recipientGuestId.length).toBe(36); // UUID format
+
+      // Fetch recipient's wishlist using the recipientGuestId from assignment
+      const wishlistRequest = new Request(
+        `http://localhost/api/guest/${assignmentData.recipientGuestId}/wishlist`
+      );
+      const wishlistResponse = await worker.fetch(
+        wishlistRequest,
+        env,
+        {} as ExecutionContext
+      );
+      const wishlistData = await wishlistResponse.json<{ wishlist: string }>();
+
+      expect(wishlistResponse.status).toBe(200);
+
+      // If Alice was assigned to Bob, verify wishlist content
+      if (assignmentData.assignment === "Bob") {
+        expect(wishlistData.wishlist).toBe(recipientWishlist);
+      }
+      // If Alice was assigned to someone else, just verify wishlist API works
+      else {
+        expect(typeof wishlistData.wishlist).toBe("string");
+      }
+    });
+
+    it("should display empty string when recipient has no wishlist", async () => {
+      // Clear Charlie's wishlist explicitly
+      const clearRequest = new Request(
+        `http://localhost/api/guest/${charlieId}/wishlist`,
+        {
+          method: "PUT",
+          body: JSON.stringify({ wishlist: "" }),
+        }
+      );
+      await worker.fetch(clearRequest, env, {} as ExecutionContext);
+
+      // Fetch Charlie's wishlist directly (should be empty)
+      const wishlistRequest = new Request(
+        `http://localhost/api/guest/${charlieId}/wishlist`
+      );
+      const wishlistResponse = await worker.fetch(
+        wishlistRequest,
+        env,
+        {} as ExecutionContext
+      );
+      const wishlistData = await wishlistResponse.json<{ wishlist: string }>();
+
+      expect(wishlistResponse.status).toBe(200);
+      expect(wishlistData.wishlist).toBe("");
     });
   });
 
