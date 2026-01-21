@@ -132,7 +132,10 @@ export class Party extends DurableObject {
   }
 
   // Set wishlist for a guest
-  async setWishlist(guestId: string, wishlist: string): Promise<{ success: boolean }> {
+  async setWishlist(
+    guestId: string,
+    wishlist: string,
+  ): Promise<{ success: boolean }> {
     const partyData = await this.ctx.storage.get<PartyData>("party");
 
     if (!partyData) {
@@ -141,7 +144,7 @@ export class Party extends DurableObject {
 
     // Verify guest exists in this party
     const guestExists = Object.entries(partyData.guestLinks).some(
-      ([_, id]) => id === guestId
+      ([_, id]) => id === guestId,
     );
 
     if (!guestExists) {

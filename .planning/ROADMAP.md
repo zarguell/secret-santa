@@ -23,6 +23,7 @@ Phases follow architectural dependencies: storage foundation first, then API exp
 **Dependencies:** None (extends existing Party DO)
 
 **Requirements:**
+
 - STOR-01: Party Durable Object stores wishlists using `wishlists: Record<string, string>` field
 - STOR-02: System uses per-guest storage key pattern `wishlist:{guestId}` for individual wishlists
 - STOR-03: System enforces 500 character limit on wishlist text
@@ -30,6 +31,7 @@ Phases follow architectural dependencies: storage foundation first, then API exp
 - TEST-01: Unit tests cover wishlist storage and retrieval in Party Durable Object
 
 **Success Criteria:**
+
 1. Party Durable Object stores wishlist text for a guest ID and retrieves it correctly
 2. System rejects wishlist updates exceeding 500 characters with clear error
 3. System returns empty string when no wishlist exists for a guest (not null/undefined)
@@ -38,9 +40,11 @@ Phases follow architectural dependencies: storage foundation first, then API exp
 **Plans:** 1 plan in 1 wave
 
 **Plan List:**
+
 - [x] 04-01-PLAN.md — Add wishlist types, DO methods (setWishlist/getWishlist), and comprehensive unit tests
 
 **Deliverables:**
+
 - `setWishlist(guestId, text)` and `getWishlist(guestId)` methods in Party class
 - Validation logic (500 char limit, guest exists in party)
 - Unit tests for all DO wishlist methods (10 test cases)
@@ -56,6 +60,7 @@ Phases follow architectural dependencies: storage foundation first, then API exp
 **Dependencies:** Phase 4 (storage layer)
 
 **Requirements:**
+
 - API-01: PUT /api/guest/:guestId/wishlist updates guest's wishlist with validation
 - API-02: GET /api/guest/:guestId/wishlist returns guest's current wishlist or empty string
 - API-03: GET /api/guest/:guestId/assignment response includes recipientWishlist field
@@ -63,6 +68,7 @@ Phases follow architectural dependencies: storage foundation first, then API exp
 - TEST-02: Integration tests cover wishlist API endpoints
 
 **Success Criteria:**
+
 1. Client can PUT wishlist text and receive 200 OK on success
 2. Client can GET wishlist text and receive current content or empty string
 3. API returns 400 Bad Request for invalid input (non-string, exceeds 500 chars)
@@ -72,9 +78,11 @@ Phases follow architectural dependencies: storage foundation first, then API exp
 **Plans:** 1 plan in 1 wave
 
 **Plan List:**
+
 - [x] 05-01-PLAN.md — Implement PUT/GET /api/guest/:guestId/wishlist endpoints, extend assignment response, add integration tests
 
 **Deliverables:**
+
 - `PUT /api/guest/:guestId/wishlist` endpoint in `index.ts`
 - `GET /api/guest/:guestId/wishlist` endpoint in `index.ts`
 - KV lookup → DO stub → method call wiring
@@ -92,11 +100,13 @@ Phases follow architectural dependencies: storage foundation first, then API exp
 **Dependencies:** Phase 5 (API endpoints)
 
 **Requirements:**
+
 - UI-01: Guest page displays "My Wishlist" section with textarea form
 - UI-02: Character counter displays current length / 500 as user types
 - UI-03: Guest page loads and displays guest's current wishlist on page load
 
 **Success Criteria:**
+
 1. Guest sees "My Wishlist" section with textarea and character counter when loading their link
 2. Character counter updates in real-time as user types (X/500)
 3. Page loads and displays user's current wishlist text on initialization
@@ -106,10 +116,12 @@ Phases follow architectural dependencies: storage foundation first, then API exp
 **Plans:** 2 plans (2 complete)
 
 **Plan List:**
+
 - [x] 06-01-PLAN.md — Add wishlist UI to guest.html, load/save functions to guest.js, and CSS styles to style.css
 - [x] 06-02-PLAN.md — Fix API integration mismatches (send JSON body, parse JSON response)
 
 **Deliverables:**
+
 - Wishlist form section in `guest.html` (textarea + character counter + save button)
 - `loadWishlist()`, `saveWishlist()`, and `updateCounter()` functions in `guest.js`
 - Character counter event listener with color warning
@@ -128,10 +140,12 @@ Phases follow architectural dependencies: storage foundation first, then API exp
 **Dependencies:** Phase 6 (client UI layer)
 
 **Requirements:**
+
 - UI-04: Assignment view displays "Recipient's Wishlist" section
 - UI-05: UI handles empty wishlist state (no wishlist set message)
 
 **Success Criteria:**
+
 1. Assignment page includes "Recipient's Wishlist" section below assignment details ✓
 2. Section displays recipient's wishlist text if set ✓
 3. Section shows "No wishlist set" message if recipient hasn't created one ✓
@@ -141,9 +155,11 @@ Phases follow architectural dependencies: storage foundation first, then API exp
 **Plans:** 1 plan in 1 wave
 
 **Plan List:**
+
 - [x] 07-01-PLAN.md — Add recipient wishlist section to guest.html, loadRecipientWishlist() function to guest.js, and end-to-end test
 
 **Deliverables:**
+
 - `GET /api/guest/:recipientGuestId/wishlist` endpoint (already exists from Phase 5)
 - "Recipient's Wishlist" section in `guest.html` with proper card styling ✓
 - `loadRecipientWishlist()` function in `guest.js` with JSON parsing and error handling ✓
@@ -154,12 +170,12 @@ Phases follow architectural dependencies: storage foundation first, then API exp
 
 ## Progress
 
-| Phase | Name | Status | Progress |
-|-------|------|--------|----------|
-| 4 | Durable Object Storage Layer | Complete | 100% |
-| 5 | API Endpoint Layer | Complete | 100% |
-| 6 | Client UI Layer | Complete | 100% |
-| 7 | Recipient Wishlist Integration | Complete | 100% |
+| Phase | Name                           | Status   | Progress |
+| ----- | ------------------------------ | -------- | -------- |
+| 4     | Durable Object Storage Layer   | Complete | 100%     |
+| 5     | API Endpoint Layer             | Complete | 100%     |
+| 6     | Client UI Layer                | Complete | 100%     |
+| 7     | Recipient Wishlist Integration | Complete | 100%     |
 
 **Overall Milestone Progress:** 100% (4/4 phases complete)
 
@@ -174,11 +190,13 @@ Phases follow architectural dependencies: storage foundation first, then API exp
 **Testing strategy:** Tests are embedded within phases (unit tests in Phase 4, integration tests in Phase 5, edge case tests in Phase 6) to ensure each layer is validated before building dependent layers.
 
 **Key architectural decisions:**
+
 - Per-guest keys (`wishlist:${guestId}`) in Party DO — simpler than SQL for flat string data
 - Security via guest ID ownership — anyone with link can edit (matches v1.0 pattern)
 - Client-side fetch for recipient wishlist — keeps assignment response lightweight
 
 **Avoided pitfalls:**
+
 - Race conditions: Durable Object input gates handle automatically
 - Input validation failures: Enforced at API boundary
 - DO overload: Lightweight operations, no external I/O
@@ -186,9 +204,10 @@ Phases follow architectural dependencies: storage foundation first, then API exp
 - Migration: Optional chaining for missing data
 
 ---
-*Roadmap created: 2026-01-19*
-*Phase 4 completed: 2026-01-20*
-*Phase 5 completed: 2026-01-20*
-*Phase 6 completed: 2026-01-20*
-*Phase 7 completed: 2026-01-21*
-*Milestone v1.1 Wishlist Feature: 100% complete*
+
+_Roadmap created: 2026-01-19_
+_Phase 4 completed: 2026-01-20_
+_Phase 5 completed: 2026-01-20_
+_Phase 6 completed: 2026-01-20_
+_Phase 7 completed: 2026-01-21_
+_Milestone v1.1 Wishlist Feature: 100% complete_

@@ -118,7 +118,9 @@ describe("API Endpoints", () => {
       const response = await worker.fetch(request, env, {} as ExecutionContext);
 
       expect(response.headers.get("Access-Control-Allow-Origin")).toBe("*");
-      expect(response.headers.get("Access-Control-Allow-Methods")).toBe("GET, POST, PUT, OPTIONS");
+      expect(response.headers.get("Access-Control-Allow-Methods")).toBe(
+        "GET, POST, PUT, OPTIONS",
+      );
     });
   });
 
@@ -134,14 +136,20 @@ describe("API Endpoints", () => {
         }),
       });
 
-      const createResponse = await worker.fetch(createRequest, env, {} as ExecutionContext);
+      const createResponse = await worker.fetch(
+        createRequest,
+        env,
+        {} as ExecutionContext,
+      );
       const createData = await createResponse.json();
       const guestUrl = createData.guestUrls.Alice;
       guestId = guestUrl.split("/").pop();
     });
 
     it("should return assignment for valid guest ID", async () => {
-      const request = new Request(`http://localhost/api/guest/${guestId}/assignment`);
+      const request = new Request(
+        `http://localhost/api/guest/${guestId}/assignment`,
+      );
 
       const response = await worker.fetch(request, env, {} as ExecutionContext);
       const data = await response.json();
@@ -155,7 +163,9 @@ describe("API Endpoints", () => {
 
     it("should return 404 for non-existent guest", async () => {
       const fakeId = "00000000-0000-0000-0000-000000000000";
-      const request = new Request(`http://localhost/api/guest/${fakeId}/assignment`);
+      const request = new Request(
+        `http://localhost/api/guest/${fakeId}/assignment`,
+      );
 
       const response = await worker.fetch(request, env, {} as ExecutionContext);
 
@@ -164,7 +174,9 @@ describe("API Endpoints", () => {
 
     it("should return 404 for non-existent guest ID", async () => {
       const fakeId = "00000000-0000-0000-0000-000000000000";
-      const request = new Request(`http://localhost/api/guest/${fakeId}/assignment`);
+      const request = new Request(
+        `http://localhost/api/guest/${fakeId}/assignment`,
+      );
 
       const response = await worker.fetch(request, env, {} as ExecutionContext);
       const data = await response.json();
@@ -174,7 +186,9 @@ describe("API Endpoints", () => {
     });
 
     it("should include CORS headers", async () => {
-      const request = new Request(`http://localhost/api/guest/${guestId}/assignment`);
+      const request = new Request(
+        `http://localhost/api/guest/${guestId}/assignment`,
+      );
 
       const response = await worker.fetch(request, env, {} as ExecutionContext);
 
@@ -192,8 +206,12 @@ describe("API Endpoints", () => {
 
       expect(response.status).toBe(200);
       expect(response.headers.get("Access-Control-Allow-Origin")).toBe("*");
-      expect(response.headers.get("Access-Control-Allow-Methods")).toBe("GET, POST, PUT, OPTIONS");
-      expect(response.headers.get("Access-Control-Allow-Headers")).toBe("Content-Type");
+      expect(response.headers.get("Access-Control-Allow-Methods")).toBe(
+        "GET, POST, PUT, OPTIONS",
+      );
+      expect(response.headers.get("Access-Control-Allow-Headers")).toBe(
+        "Content-Type",
+      );
     });
   });
 
@@ -207,7 +225,11 @@ describe("API Endpoints", () => {
         }),
       });
 
-      const createResponse = await worker.fetch(createRequest, env, {} as ExecutionContext);
+      const createResponse = await worker.fetch(
+        createRequest,
+        env,
+        {} as ExecutionContext,
+      );
       const createData = await createResponse.json<{
         guestUrls: { [key: string]: string };
       }>();
@@ -263,7 +285,11 @@ describe("API Endpoints", () => {
         }),
       });
 
-      const createResponse = await worker.fetch(createRequest, env, {} as ExecutionContext);
+      const createResponse = await worker.fetch(
+        createRequest,
+        env,
+        {} as ExecutionContext,
+      );
       const createData = await createResponse.json<{
         partyId: string;
         guestUrls: { [key: string]: string };
@@ -274,10 +300,13 @@ describe("API Endpoints", () => {
     });
 
     it("should set wishlist for valid guest", async () => {
-      const request = new Request(`http://localhost/api/guest/${guestId}/wishlist`, {
-        method: "PUT",
-        body: JSON.stringify({ wishlist: "Books, gadgets, and coffee" }),
-      });
+      const request = new Request(
+        `http://localhost/api/guest/${guestId}/wishlist`,
+        {
+          method: "PUT",
+          body: JSON.stringify({ wishlist: "Books, gadgets, and coffee" }),
+        },
+      );
 
       const response = await worker.fetch(request, env, {} as ExecutionContext);
       const data = await response.json();
@@ -286,8 +315,14 @@ describe("API Endpoints", () => {
       expect(data.success).toBe(true);
 
       // Verify by getting the wishlist
-      const getRequest = new Request(`http://localhost/api/guest/${guestId}/wishlist`);
-      const getResponse = await worker.fetch(getRequest, env, {} as ExecutionContext);
+      const getRequest = new Request(
+        `http://localhost/api/guest/${guestId}/wishlist`,
+      );
+      const getResponse = await worker.fetch(
+        getRequest,
+        env,
+        {} as ExecutionContext,
+      );
       const getData = await getResponse.json<{ wishlist: string }>();
 
       expect(getResponse.status).toBe(200);
@@ -296,24 +331,40 @@ describe("API Endpoints", () => {
 
     it("should update existing wishlist", async () => {
       // Set initial wishlist
-      const putRequest1 = new Request(`http://localhost/api/guest/${guestId}/wishlist`, {
-        method: "PUT",
-        body: JSON.stringify({ wishlist: "First wishlist" }),
-      });
+      const putRequest1 = new Request(
+        `http://localhost/api/guest/${guestId}/wishlist`,
+        {
+          method: "PUT",
+          body: JSON.stringify({ wishlist: "First wishlist" }),
+        },
+      );
       await worker.fetch(putRequest1, env, {} as ExecutionContext);
 
       // Update with new wishlist
-      const putRequest2 = new Request(`http://localhost/api/guest/${guestId}/wishlist`, {
-        method: "PUT",
-        body: JSON.stringify({ wishlist: "Updated wishlist" }),
-      });
-      const response2 = await worker.fetch(putRequest2, env, {} as ExecutionContext);
+      const putRequest2 = new Request(
+        `http://localhost/api/guest/${guestId}/wishlist`,
+        {
+          method: "PUT",
+          body: JSON.stringify({ wishlist: "Updated wishlist" }),
+        },
+      );
+      const response2 = await worker.fetch(
+        putRequest2,
+        env,
+        {} as ExecutionContext,
+      );
 
       expect(response2.status).toBe(200);
 
       // Verify only the latest value is stored
-      const getRequest = new Request(`http://localhost/api/guest/${guestId}/wishlist`);
-      const getResponse = await worker.fetch(getRequest, env, {} as ExecutionContext);
+      const getRequest = new Request(
+        `http://localhost/api/guest/${guestId}/wishlist`,
+      );
+      const getResponse = await worker.fetch(
+        getRequest,
+        env,
+        {} as ExecutionContext,
+      );
       const getData = await getResponse.json<{ wishlist: string }>();
 
       expect(getResponse.status).toBe(200);
@@ -322,10 +373,13 @@ describe("API Endpoints", () => {
 
     it("should return 404 for non-existent guest", async () => {
       const fakeId = "00000000-0000-0000-0000-000000000000";
-      const request = new Request(`http://localhost/api/guest/${fakeId}/wishlist`, {
-        method: "PUT",
-        body: JSON.stringify({ wishlist: "Test" }),
-      });
+      const request = new Request(
+        `http://localhost/api/guest/${fakeId}/wishlist`,
+        {
+          method: "PUT",
+          body: JSON.stringify({ wishlist: "Test" }),
+        },
+      );
 
       const response = await worker.fetch(request, env, {} as ExecutionContext);
       const data = await response.json();
@@ -337,10 +391,13 @@ describe("API Endpoints", () => {
     it("should return 400 for invalid guest ID format", async () => {
       // Use 36-char fake ID that passes regex but doesn't exist
       const fakeId = "00000000-0000-0000-0000-000000000000";
-      const request = new Request(`http://localhost/api/guest/${fakeId}/wishlist`, {
-        method: "PUT",
-        body: JSON.stringify({ wishlist: "Test" }),
-      });
+      const request = new Request(
+        `http://localhost/api/guest/${fakeId}/wishlist`,
+        {
+          method: "PUT",
+          body: JSON.stringify({ wishlist: "Test" }),
+        },
+      );
 
       const response = await worker.fetch(request, env, {} as ExecutionContext);
       const data = await response.json();
@@ -350,10 +407,13 @@ describe("API Endpoints", () => {
     });
 
     it("should handle empty wishlist", async () => {
-      const request = new Request(`http://localhost/api/guest/${guestId}/wishlist`, {
-        method: "PUT",
-        body: JSON.stringify({ wishlist: "" }),
-      });
+      const request = new Request(
+        `http://localhost/api/guest/${guestId}/wishlist`,
+        {
+          method: "PUT",
+          body: JSON.stringify({ wishlist: "" }),
+        },
+      );
 
       const response = await worker.fetch(request, env, {} as ExecutionContext);
       const data = await response.json();
@@ -362,8 +422,14 @@ describe("API Endpoints", () => {
       expect(data.success).toBe(true);
 
       // Verify empty string is stored
-      const getRequest = new Request(`http://localhost/api/guest/${guestId}/wishlist`);
-      const getResponse = await worker.fetch(getRequest, env, {} as ExecutionContext);
+      const getRequest = new Request(
+        `http://localhost/api/guest/${guestId}/wishlist`,
+      );
+      const getResponse = await worker.fetch(
+        getRequest,
+        env,
+        {} as ExecutionContext,
+      );
       const getData = await getResponse.json<{ wishlist: string }>();
 
       expect(getResponse.status).toBe(200);
@@ -371,11 +437,15 @@ describe("API Endpoints", () => {
     });
 
     it("should handle Unicode characters", async () => {
-      const unicodeWishlist = "🎮 Video games 🎸 Guitars 📚 Books 🍕 Pizza 🎁 Gifts";
-      const request = new Request(`http://localhost/api/guest/${guestId}/wishlist`, {
-        method: "PUT",
-        body: JSON.stringify({ wishlist: unicodeWishlist }),
-      });
+      const unicodeWishlist =
+        "🎮 Video games 🎸 Guitars 📚 Books 🍕 Pizza 🎁 Gifts";
+      const request = new Request(
+        `http://localhost/api/guest/${guestId}/wishlist`,
+        {
+          method: "PUT",
+          body: JSON.stringify({ wishlist: unicodeWishlist }),
+        },
+      );
 
       const response = await worker.fetch(request, env, {} as ExecutionContext);
       const data = await response.json();
@@ -384,8 +454,14 @@ describe("API Endpoints", () => {
       expect(data.success).toBe(true);
 
       // Verify Unicode is preserved
-      const getRequest = new Request(`http://localhost/api/guest/${guestId}/wishlist`);
-      const getResponse = await worker.fetch(getRequest, env, {} as ExecutionContext);
+      const getRequest = new Request(
+        `http://localhost/api/guest/${guestId}/wishlist`,
+      );
+      const getResponse = await worker.fetch(
+        getRequest,
+        env,
+        {} as ExecutionContext,
+      );
       const getData = await getResponse.json<{ wishlist: string }>();
 
       expect(getResponse.status).toBe(200);
@@ -393,15 +469,20 @@ describe("API Endpoints", () => {
     });
 
     it("should include CORS headers", async () => {
-      const request = new Request(`http://localhost/api/guest/${guestId}/wishlist`, {
-        method: "PUT",
-        body: JSON.stringify({ wishlist: "Test" }),
-      });
+      const request = new Request(
+        `http://localhost/api/guest/${guestId}/wishlist`,
+        {
+          method: "PUT",
+          body: JSON.stringify({ wishlist: "Test" }),
+        },
+      );
 
       const response = await worker.fetch(request, env, {} as ExecutionContext);
 
       expect(response.headers.get("Access-Control-Allow-Origin")).toBe("*");
-      expect(response.headers.get("Access-Control-Allow-Methods")).toBe("GET, POST, PUT, OPTIONS");
+      expect(response.headers.get("Access-Control-Allow-Methods")).toBe(
+        "GET, POST, PUT, OPTIONS",
+      );
     });
   });
 
@@ -417,7 +498,11 @@ describe("API Endpoints", () => {
         }),
       });
 
-      const createResponse = await worker.fetch(createRequest, env, {} as ExecutionContext);
+      const createResponse = await worker.fetch(
+        createRequest,
+        env,
+        {} as ExecutionContext,
+      );
       const createData = await createResponse.json<{
         guestUrls: { [key: string]: string };
       }>();
@@ -427,15 +512,24 @@ describe("API Endpoints", () => {
 
     it("should get wishlist for valid guest", async () => {
       // First set the wishlist
-      const putRequest = new Request(`http://localhost/api/guest/${guestId}/wishlist`, {
-        method: "PUT",
-        body: JSON.stringify({ wishlist: "My wish list" }),
-      });
+      const putRequest = new Request(
+        `http://localhost/api/guest/${guestId}/wishlist`,
+        {
+          method: "PUT",
+          body: JSON.stringify({ wishlist: "My wish list" }),
+        },
+      );
       await worker.fetch(putRequest, env, {} as ExecutionContext);
 
       // Then get it
-      const getRequest = new Request(`http://localhost/api/guest/${guestId}/wishlist`);
-      const response = await worker.fetch(getRequest, env, {} as ExecutionContext);
+      const getRequest = new Request(
+        `http://localhost/api/guest/${guestId}/wishlist`,
+      );
+      const response = await worker.fetch(
+        getRequest,
+        env,
+        {} as ExecutionContext,
+      );
       const data = await response.json<{ wishlist: string }>();
 
       expect(response.status).toBe(200);
@@ -443,8 +537,14 @@ describe("API Endpoints", () => {
     });
 
     it("should return empty string for unset wishlist", async () => {
-      const getRequest = new Request(`http://localhost/api/guest/${guestId}/wishlist`);
-      const response = await worker.fetch(getRequest, env, {} as ExecutionContext);
+      const getRequest = new Request(
+        `http://localhost/api/guest/${guestId}/wishlist`,
+      );
+      const response = await worker.fetch(
+        getRequest,
+        env,
+        {} as ExecutionContext,
+      );
       const data = await response.json<{ wishlist: string }>();
 
       expect(response.status).toBe(200);
@@ -453,7 +553,9 @@ describe("API Endpoints", () => {
 
     it("should return 404 for non-existent guest", async () => {
       const fakeId = "00000000-0000-0000-0000-000000000000";
-      const request = new Request(`http://localhost/api/guest/${fakeId}/wishlist`);
+      const request = new Request(
+        `http://localhost/api/guest/${fakeId}/wishlist`,
+      );
 
       const response = await worker.fetch(request, env, {} as ExecutionContext);
       const data = await response.json();
@@ -465,7 +567,9 @@ describe("API Endpoints", () => {
     it("should return 400 for invalid guest ID format", async () => {
       // Use 36-char fake ID that passes regex but doesn't exist
       const fakeId = "00000000-0000-0000-0000-000000000000";
-      const request = new Request(`http://localhost/api/guest/${fakeId}/wishlist`);
+      const request = new Request(
+        `http://localhost/api/guest/${fakeId}/wishlist`,
+      );
 
       const response = await worker.fetch(request, env, {} as ExecutionContext);
       const data = await response.json();
@@ -475,12 +579,16 @@ describe("API Endpoints", () => {
     });
 
     it("should include CORS headers", async () => {
-      const request = new Request(`http://localhost/api/guest/${guestId}/wishlist`);
+      const request = new Request(
+        `http://localhost/api/guest/${guestId}/wishlist`,
+      );
 
       const response = await worker.fetch(request, env, {} as ExecutionContext);
 
       expect(response.headers.get("Access-Control-Allow-Origin")).toBe("*");
-      expect(response.headers.get("Access-Control-Allow-Methods")).toBe("GET, POST, PUT, OPTIONS");
+      expect(response.headers.get("Access-Control-Allow-Methods")).toBe(
+        "GET, POST, PUT, OPTIONS",
+      );
     });
   });
 
@@ -489,7 +597,8 @@ describe("API Endpoints", () => {
     let bobId: string;
     let charlieId: string;
     let recipientGuestId: string;
-    const recipientWishlist = "Books, gadgets, and coffee\n\nSomething warm for winter";
+    const recipientWishlist =
+      "Books, gadgets, and coffee\n\nSomething warm for winter";
 
     beforeEach(async () => {
       // Create party with 3 guests
@@ -504,7 +613,7 @@ describe("API Endpoints", () => {
       const createResponse = await worker.fetch(
         createRequest,
         env,
-        {} as ExecutionContext
+        {} as ExecutionContext,
       );
       const createData = await createResponse.json<{
         guestUrls: { [key: string]: string };
@@ -525,7 +634,7 @@ describe("API Endpoints", () => {
         {
           method: "PUT",
           body: JSON.stringify({ wishlist: recipientWishlist }),
-        }
+        },
       );
       await worker.fetch(wishlistRequest, env, {} as ExecutionContext);
     });
@@ -533,12 +642,12 @@ describe("API Endpoints", () => {
     it("should fetch recipient wishlist using recipientGuestId from assignment", async () => {
       // Get assignment for Alice - Secret Santa assignment is random, so we just verify it returns a valid recipientGuestId
       const assignmentRequest = new Request(
-        `http://localhost/api/guest/${aliceId}/assignment`
+        `http://localhost/api/guest/${aliceId}/assignment`,
       );
       const assignmentResponse = await worker.fetch(
         assignmentRequest,
         env,
-        {} as ExecutionContext
+        {} as ExecutionContext,
       );
       const assignmentData = await assignmentResponse.json<{
         recipientGuestId: string;
@@ -552,12 +661,12 @@ describe("API Endpoints", () => {
 
       // Fetch recipient's wishlist using the recipientGuestId from assignment
       const wishlistRequest = new Request(
-        `http://localhost/api/guest/${assignmentData.recipientGuestId}/wishlist`
+        `http://localhost/api/guest/${assignmentData.recipientGuestId}/wishlist`,
       );
       const wishlistResponse = await worker.fetch(
         wishlistRequest,
         env,
-        {} as ExecutionContext
+        {} as ExecutionContext,
       );
       const wishlistData = await wishlistResponse.json<{ wishlist: string }>();
 
@@ -580,18 +689,18 @@ describe("API Endpoints", () => {
         {
           method: "PUT",
           body: JSON.stringify({ wishlist: "" }),
-        }
+        },
       );
       await worker.fetch(clearRequest, env, {} as ExecutionContext);
 
       // Fetch Charlie's wishlist directly (should be empty)
       const wishlistRequest = new Request(
-        `http://localhost/api/guest/${charlieId}/wishlist`
+        `http://localhost/api/guest/${charlieId}/wishlist`,
       );
       const wishlistResponse = await worker.fetch(
         wishlistRequest,
         env,
-        {} as ExecutionContext
+        {} as ExecutionContext,
       );
       const wishlistData = await wishlistResponse.json<{ wishlist: string }>();
 
@@ -612,14 +721,20 @@ describe("API Endpoints", () => {
         }),
       });
 
-      const createResponse = await worker.fetch(createRequest, env, {} as ExecutionContext);
+      const createResponse = await worker.fetch(
+        createRequest,
+        env,
+        {} as ExecutionContext,
+      );
       const createData = await createResponse.json();
       const guestUrl = createData.guestUrls.Alice;
       guestId = guestUrl.split("/").pop();
     });
 
     it("should return assignment for valid guest ID", async () => {
-      const request = new Request(`http://localhost/api/guest/${guestId}/assignment`);
+      const request = new Request(
+        `http://localhost/api/guest/${guestId}/assignment`,
+      );
 
       const response = await worker.fetch(request, env, {} as ExecutionContext);
       const data = await response.json();
@@ -632,7 +747,9 @@ describe("API Endpoints", () => {
     });
 
     it("should include recipientGuestId in response", async () => {
-      const request = new Request(`http://localhost/api/guest/${guestId}/assignment`);
+      const request = new Request(
+        `http://localhost/api/guest/${guestId}/assignment`,
+      );
 
       const response = await worker.fetch(request, env, {} as ExecutionContext);
       const data = await response.json<{ recipientGuestId: string }>();
@@ -646,7 +763,9 @@ describe("API Endpoints", () => {
 
     it("should return 404 for non-existent guest", async () => {
       const fakeId = "00000000-0000-0000-0000-000000000000";
-      const request = new Request(`http://localhost/api/guest/${fakeId}/assignment`);
+      const request = new Request(
+        `http://localhost/api/guest/${fakeId}/assignment`,
+      );
 
       const response = await worker.fetch(request, env, {} as ExecutionContext);
       const data = await response.json();
@@ -656,12 +775,16 @@ describe("API Endpoints", () => {
     });
 
     it("should include CORS headers", async () => {
-      const request = new Request(`http://localhost/api/guest/${guestId}/assignment`);
+      const request = new Request(
+        `http://localhost/api/guest/${guestId}/assignment`,
+      );
 
       const response = await worker.fetch(request, env, {} as ExecutionContext);
 
       expect(response.headers.get("Access-Control-Allow-Origin")).toBe("*");
-      expect(response.headers.get("Access-Control-Allow-Methods")).toBe("GET, POST, PUT, OPTIONS");
+      expect(response.headers.get("Access-Control-Allow-Methods")).toBe(
+        "GET, POST, PUT, OPTIONS",
+      );
     });
   });
 

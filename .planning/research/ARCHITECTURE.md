@@ -58,12 +58,12 @@
 
 ### Component Responsibilities
 
-| Component | Responsibility | Typical Implementation |
-|-----------|----------------|------------------------|
-| **Client (guest.js)** | Fetch wishlist, render form, handle edit/save | Vanilla JS with fetch API |
-| **Worker Router** | Route requests, validate guest IDs, proxy to DO | URL pattern matching in fetch handler |
-| **Party DO** | Store party data + wishlists, enforce 500 char limit | Single storage key `wishlists` or per-guest keys |
-| **KV Namespace** | Fast guest→party mapping (guestId → {partyId, guestName}) | Existing: `guest:${guestId}` keys |
+| Component             | Responsibility                                            | Typical Implementation                           |
+| --------------------- | --------------------------------------------------------- | ------------------------------------------------ |
+| **Client (guest.js)** | Fetch wishlist, render form, handle edit/save             | Vanilla JS with fetch API                        |
+| **Worker Router**     | Route requests, validate guest IDs, proxy to DO           | URL pattern matching in fetch handler            |
+| **Party DO**          | Store party data + wishlists, enforce 500 char limit      | Single storage key `wishlists` or per-guest keys |
+| **KV Namespace**      | Fast guest→party mapping (guestId → {partyId, guestName}) | Existing: `guest:${guestId}` keys                |
 
 ## Recommended Project Structure
 
@@ -99,10 +99,12 @@ tests/
 ### Pattern 1: Single Storage Key vs. Per-Guest Keys
 
 **What:** Two approaches for storing wishlists in DO storage:
+
 1. **Single storage key:** Store all wishlists in one `wishlists` object
 2. **Per-guest keys:** Store each wishlist as `wishlist:${guestId}`
 
 **When to use:**
+
 - **Single key:** When you frequently read all wishlists together (< 100 guests)
 - **Per-guest keys:** When you need individual lookups and want to minimize read/write payload sizes
 
@@ -113,12 +115,14 @@ tests/
 | Per-guest keys | Smaller payloads, targeted updates | More keys to manage, need list for all |
 
 **Recommendation:** **Per-guest keys** because:
+
 - Wishlists are independently edited (no need for atomic multi-guest updates)
 - 500 char limit means small payloads
 - Matches existing KV pattern (`guest:${guestId}`)
 - Can use `storage.list()` with prefix to fetch all if needed
 
 **Example:**
+
 ```typescript
 // Party DO - per-guest key approach
 async setWishlist(guestId: string, wishlist: string): Promise<void> {
@@ -158,10 +162,12 @@ async getAllWishlists(): Promise<Record<string, string>> {
 **When to use:** When you have a global identifier that needs to resolve to a specific Durable Object instance
 
 **Trade-offs:**
+
 - **Pros:** Fast global lookups, separates routing from data storage
 - **Cons:** Double lookup (KV → DO) for every request
 
 **Example:**
+
 ```typescript
 // Existing pattern (no changes needed)
 const mapping = await getGuestMapping(env.GUEST_KV, guestId);
@@ -176,10 +182,12 @@ const wishlist = await partyStub.getWishlist(guestId);
 **When to use:** Simple access control without authentication
 
 **Trade-offs:**
+
 - **Pros:** No auth complexity, uses existing guest ID system
 - **Cons:** Security depends on guest ID secrecy (same as assignment viewing)
 
 **Implementation:**
+
 ```typescript
 // Party DO - verify guest belongs to party
 async setWishlist(guestId: string, guestName: string, wishlist: string): Promise<void> {
@@ -273,11 +281,11 @@ GET /api/guest/:guestId/assignment (existing)
 
 ## Scaling Considerations
 
-| Scale | Architecture Adjustments |
-|-------|--------------------------|
-| 0-1k parties | Current architecture optimal. Single DO per party isolates data. |
+| Scale           | Architecture Adjustments                                                                                  |
+| --------------- | --------------------------------------------------------------------------------------------------------- |
+| 0-1k parties    | Current architecture optimal. Single DO per party isolates data.                                          |
 | 1k-100k parties | No changes needed. DO storage handles ~100MB per DO. Wishlists at 500 chars × 50 guests = 25KB per party. |
-| 100k+ parties | Consider DO migration policy for inactive parties. Current DO storage limit 128GB per object. |
+| 100k+ parties   | Consider DO migration policy for inactive parties. Current DO storage limit 128GB per object.             |
 
 ### Scaling Priorities
 
@@ -301,6 +309,7 @@ GET /api/guest/:guestId/assignment (existing)
 **What people do:** Store wishlists as `wishlist:${guestId}` in KV namespace alongside guest mappings
 
 **Why it's wrong:**
+
 - KV is eventually consistent; wishlist edits may not appear immediately
 - Party data in DO, wishlists in KV = split brain, harder to reason about
 - Can't atomically fetch party + all wishlists for admin views
@@ -313,6 +322,7 @@ GET /api/guest/:guestId/assignment (existing)
 **What people do:** Store all wishlists as one object: `{ "guestId1": "wishlist1", "guestId2": "wishlist2", ... }`
 
 **Why it's wrong:**
+
 - Editing one wishlist requires reading all wishlists (500 chars × 50 = 25KB payload)
 - Higher risk of concurrent write conflicts
 - Violates principle of minimal data access
@@ -332,6 +342,7 @@ GET /api/guest/:guestId/assignment (existing)
 **What people do:** Create `WishlistDurableObject` separate from `PartyDurableObject`
 
 **Why it's wrong:**
+
 - Over-engineering; adds latency (two DO lookups instead of one)
 - Wishlists have no lifecycle independent of party
 - Complicates data consistency and deletion
@@ -342,17 +353,17 @@ GET /api/guest/:guestId/assignment (existing)
 
 ### External Services
 
-| Service | Integration Pattern | Notes |
-|---------|---------------------|-------|
-| None | — | Pure Cloudflare Workers platform; no external APIs needed |
+| Service | Integration Pattern | Notes                                                     |
+| ------- | ------------------- | --------------------------------------------------------- |
+| None    | —                   | Pure Cloudflare Workers platform; no external APIs needed |
 
 ### Internal Boundaries
 
-| Boundary | Communication | Notes |
-|----------|---------------|-------|
-| Worker ↔ Party DO | RPC via stub (`env.PARTY_DO.get(id).method()`) | Single DO instance per party ID |
-| Worker ↔ KV | Direct (`env.GUEST_KV.get/put`) | Guest ID → Party ID lookup |
-| Client ↔ Worker | HTTP (fetch API) | JSON requests/responses with CORS |
+| Boundary          | Communication                                  | Notes                             |
+| ----------------- | ---------------------------------------------- | --------------------------------- |
+| Worker ↔ Party DO | RPC via stub (`env.PARTY_DO.get(id).method()`) | Single DO instance per party ID   |
+| Worker ↔ KV       | Direct (`env.GUEST_KV.get/put`)                | Guest ID → Party ID lookup        |
+| Client ↔ Worker   | HTTP (fetch API)                               | JSON requests/responses with CORS |
 
 ### New API Endpoints
 
@@ -368,6 +379,7 @@ GET /api/guest/:guestId/assignment (existing)
 ## Recommended Build Order
 
 ### Phase 1: Durable Object Layer (Foundation)
+
 1. Add `WishlistData` interface to `types.ts`
 2. Add `setWishlist()` and `getWishlist()` methods to `Party` class
 3. Add validation (500 char limit, guest exists in party)
@@ -376,6 +388,7 @@ GET /api/guest/:guestId/assignment (existing)
 **Why first:** Changes to core storage logic; everything else depends on this.
 
 ### Phase 2: Worker Router Layer (API)
+
 1. Add `PUT /api/guest/:guestId/wishlist` endpoint in `index.ts`
 2. Add `GET /api/guest/:guestId/wishlist` endpoint in `index.ts`
 3. Wire up KV lookup → DO stub → method call
@@ -384,6 +397,7 @@ GET /api/guest/:guestId/assignment (existing)
 **Why second:** Exposes DO functionality via HTTP; can test with curl before building UI.
 
 ### Phase 3: Client Layer (UI)
+
 1. Add wishlist form section to `guest.html`
 2. Add `loadWishlist()` and `saveWishlist()` functions to `guest.js`
 3. Add styles for form elements to `style.css`
@@ -392,6 +406,7 @@ GET /api/guest/:guestId/assignment (existing)
 **Why third:** Depends on working API; UI is a thin client layer.
 
 ### Phase 4: Integration (Recipient Wishlist)
+
 1. Modify `GET /api/guest/:guestId/assignment` to include `recipientGuestId`
 2. Add "View Recipient's Wishlist" link/button in UI
 3. Client fetches recipient wishlist using `recipientGuestId`
@@ -417,5 +432,6 @@ GET /api/guest/:guestId/assignment (existing)
   - Confirms: Single DO instance = single-threaded = consistent state
 
 ---
-*Architecture research for: Secret Santa Wishlist Feature (v1.1)*
-*Researched: 2026-01-19*
+
+_Architecture research for: Secret Santa Wishlist Feature (v1.1)_
+_Researched: 2026-01-19_

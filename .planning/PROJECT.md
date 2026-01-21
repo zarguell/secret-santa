@@ -52,6 +52,7 @@ Every guest must be able to reliably view their Secret Santa assignment from the
 ## Context
 
 **Shipped Implementation:**
+
 - Single Cloudflare Worker handling all HTTP requests
 - Durable Objects for stateful party storage
 - KV namespace for fast guest ID lookups
@@ -71,11 +72,12 @@ None — all v1.0 issues resolved
 
 <!-- Decisions that constrain future work. Add throughout project lifecycle. -->
 
-| Decision | Rationale | Outcome |
-|----------|-----------|---------|
-| Vitest for testing | Fast, modern, Cloudflare Workers compatible | ✓ Implemented with @cloudflare/vitest-pool-workers |
-| Single dev branch | Simplify workflow while iterating on static file fix and tests | ✓ Implemented |
-| Static HTML serving priority over feature additions | Core value is reliable guest assignment viewing, inline HTML is workaround | ✓ Implemented |
+| Decision                                            | Rationale                                                                  | Outcome                                            |
+| --------------------------------------------------- | -------------------------------------------------------------------------- | -------------------------------------------------- |
+| Vitest for testing                                  | Fast, modern, Cloudflare Workers compatible                                | ✓ Implemented with @cloudflare/vitest-pool-workers |
+| Single dev branch                                   | Simplify workflow while iterating on static file fix and tests             | ✓ Implemented                                      |
+| Static HTML serving priority over feature additions | Core value is reliable guest assignment viewing, inline HTML is workaround | ✓ Implemented                                      |
 
 ---
-*Last updated: 2026-01-19 after v1.1 milestone start*
+
+_Last updated: 2026-01-19 after v1.1 milestone start_

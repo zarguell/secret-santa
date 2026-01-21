@@ -16,11 +16,13 @@ Multiple concurrent requests to update a wishlist can cause data loss or corrupt
 JavaScript's async/await allows other requests to execute while waiting for I/O operations. Without proper synchronization, two users updating their wishlist simultaneously can interfere with each other.
 
 **Consequences:**
+
 - Lost wishlist items (one update overwrites another)
 - Corrupted wishlist state
 - Users frustrated that their changes disappear
 
 **Prevention:**
+
 - **Leverage Durable Object input gates** - Storage operations automatically block other events from being delivered
 - **Use write coalescing** - Multiple writes without intervening `await` are atomic
 - **Never rely solely on in-memory state** - Always persist to storage before confirming success
@@ -43,11 +45,13 @@ async updateWishlist(guestId: string, items: string[]) {
 ```
 
 **Detection:**
+
 - Wishlist changes mysteriously disappear
 - Tests pass but production has data loss under load
 - Multiple rapid updates cause inconsistent state
 
 **Sources:**
+
 - Cloudflare Durable Objects best practices (HIGH confidence)
 - "Durable Objects: Easy, Fast, Correct — Choose Three" blog post (HIGH confidence)
 
@@ -60,12 +64,14 @@ Malicious or malformed input to wishlist endpoints causes application crashes, d
 
 **Why it happens:**
 Freeform text fields without proper validation allow:
+
 - Excessive payload sizes (DoS)
 - Control characters or non-printable characters
 - Unicode normalization attacks
 - HTML/script injection attempts
 
 **Consequences:**
+
 - Durable Object crashes or resets (uncaught exceptions)
 - Storage quota exceeded
 - XSS vulnerabilities if content is reflected improperly
@@ -74,56 +80,60 @@ Freeform text fields without proper validation allow:
 **Prevention:**
 
 1. **Length validation** - Enforce 500 character limit at API boundary
+
 ```typescript
 if (wishlist.length > 500) {
   return new Response(
     JSON.stringify({ error: "Wishlist must be 500 characters or less" }),
-    { status: 400 }
+    { status: 400 },
   );
 }
 ```
 
 2. **Character validation** - Reject control characters, normalize Unicode
+
 ```typescript
 // Remove control characters except newline/tab
-const sanitized = wishlist.replace(/[\x00-\x08\x0B-\x0C\x0E-\x1F\x7F]/g, '');
+const sanitized = wishlist.replace(/[\x00-\x08\x0B-\x0C\x0E-\x1F\x7F]/g, "");
 
 // Normalize Unicode to prevent homograph attacks
-const normalized = sanitized.normalize('NFC');
+const normalized = sanitized.normalize("NFC");
 ```
 
 3. **Type validation** - Ensure input is string, not object/array
+
 ```typescript
-if (typeof wishlist !== 'string') {
-  return new Response(
-    JSON.stringify({ error: "Wishlist must be a string" }),
-    { status: 400 }
-  );
+if (typeof wishlist !== "string") {
+  return new Response(JSON.stringify({ error: "Wishlist must be a string" }), {
+    status: 400,
+  });
 }
 ```
 
 4. **Structured error handling** - Never crash on bad input
+
 ```typescript
 try {
   const result = await partyStub.updateWishlist(guestId, wishlist);
   return Response.json(result);
 } catch (error) {
   // Log but don't expose internal errors
-  console.error('Wishlist update error:', error);
-  return new Response(
-    JSON.stringify({ error: "Failed to update wishlist" }),
-    { status: 500 }
-  );
+  console.error("Wishlist update error:", error);
+  return new Response(JSON.stringify({ error: "Failed to update wishlist" }), {
+    status: 500,
+  });
 }
 ```
 
 **Detection:**
+
 - Uncaught exception errors in logs
 - Sudden Durable Object resets
 - Tests fail with unexpected input
 - High memory usage or storage quota errors
 
 **Sources:**
+
 - OWASP Serverless Top 10 (MEDIUM confidence - general best practices)
 - Cloudflare Workers error handling docs (HIGH confidence)
 
@@ -138,6 +148,7 @@ All wishlist requests for a party route through one Durable Object, causing perf
 Durable Objects are single-threaded. If all wishlist operations (view own, view recipient's, update) route through the party DO, concurrent requests queue up. With ~50 guests and multiple operations each, this creates significant load.
 
 **Consequences:**
+
 - `Error: Durable Object is overloaded. Too many requests queued.`
 - `Error: Durable Object is overloaded. Requests queued for too long.`
 - Latency increases dramatically under load
@@ -168,12 +179,14 @@ async updateWishlist(guestId: string, items: string[]) {
 ```
 
 **Detection:**
+
 - "Durable Object is overloaded" errors in logs
 - Increasing response times under load
 - Durable Object resets without code changes
 - `wrangler tail` shows queued requests
 
 **Sources:**
+
 - Cloudflare Durable Objects troubleshooting (HIGH confidence)
 - Durable Objects best practices (HIGH confidence)
 
@@ -192,6 +205,7 @@ Guests can view or modify wishlists they shouldn't have access to, breaking the 
 API endpoints don't verify that the requesting guest has permission to access the requested wishlist.
 
 **Consequences:**
+
 - Privacy violations (guests see who has them before reveal)
 - Data tampering (guests modify others' wishlists)
 - User trust eroded
@@ -230,11 +244,13 @@ async getWishlist(requestingGuestId: string, targetGuestId: string) {
 ```
 
 **Detection:**
+
 - Security audit reveals missing authorization
 - Users report seeing unexpected data
 - Tests don't cover authorization scenarios
 
 **Sources:**
+
 - OWASP Serverless Top 10 - Broken Access Control (MEDIUM confidence)
 - General security best practices (HIGH confidence)
 
@@ -249,6 +265,7 @@ Multiple small storage operations instead of batched operations cause poor perfo
 Reading/writing each wishlist item separately instead of operating on the entire wishlist at once.
 
 **Consequences:**
+
 - Slower response times (multiple round trips to storage)
 - Higher storage operation counts
 - Increased likelihood of hitting rate limits
@@ -271,11 +288,13 @@ async updateWishlist(guestId: string, items: string[]) {
 ```
 
 **Detection:**
+
 - Slow wishlist operations
 - High operation counts in logs
 - Multiple storage operations per request
 
 **Sources:**
+
 - Durable Objects storage best practices (HIGH confidence)
 
 ---
@@ -289,6 +308,7 @@ When wishlist feature is added, existing parties don't have wishlist storage ini
 Code assumes wishlist keys exist but doesn't handle missing data gracefully.
 
 **Consequences:**
+
 - Errors when viewing wishlists for existing parties
 - Inconsistent behavior between old and new parties
 - Data loss if migrations fail
@@ -296,19 +316,22 @@ Code assumes wishlist keys exist but doesn't handle missing data gracefully.
 **Prevention:**
 
 1. **Use optional chaining** - Handle missing wishlists gracefully
+
 ```typescript
-const wishlist = await this.ctx.storage.get(`wishlist:${guestId}`) || "";
+const wishlist = (await this.ctx.storage.get(`wishlist:${guestId}`)) || "";
 ```
 
 2. **Version your data** - Add schema version to track changes
+
 ```typescript
 interface PartyData {
-  version: number;  // Increment when schema changes
+  version: number; // Increment when schema changes
   // ... other fields
 }
 ```
 
 3. **Migrate in constructor** - Use `blockConcurrencyWhile` for safe migrations
+
 ```typescript
 constructor(ctx: DurableObjectState, env: Env) {
   super(ctx, env);
@@ -325,11 +348,13 @@ constructor(ctx: DurableObjectState, env: Env) {
 ```
 
 **Detection:**
+
 - Errors when accessing wishlists on existing parties
 - Tests fail with old data
 - Version mismatches between code and data
 
 **Sources:**
+
 - Cloudflare Durable Objects migration best practices (HIGH confidence)
 
 ---
@@ -344,17 +369,19 @@ Mistakes that cause annoyance but are fixable.
 Users see generic errors when wishlist operations fail, making debugging difficult.
 
 **Prevention:**
+
 ```typescript
 // Return specific, actionable error messages
 if (wishlist.length > 500) {
   return new Response(
     JSON.stringify({
       error: "Wishlist too long",
-      message: "Your wishlist must be 500 characters or less. Please shorten it.",
+      message:
+        "Your wishlist must be 500 characters or less. Please shorten it.",
       currentLength: wishlist.length,
-      maxLength: 500
+      maxLength: 500,
     }),
-    { status: 400 }
+    { status: 400 },
   );
 }
 ```
@@ -367,6 +394,7 @@ if (wishlist.length > 500) {
 Edge cases like empty wishlists, special characters, or concurrent updates aren't tested.
 
 **Prevention:**
+
 - Test empty wishlist updates
 - Test maximum length wishlist
 - Test special characters and Unicode
@@ -377,14 +405,14 @@ Edge cases like empty wishlists, special characters, or concurrent updates aren'
 
 ## Phase-Specific Warnings
 
-| Phase Topic | Likely Pitfall | Mitigation |
-|-------------|---------------|------------|
+| Phase Topic           | Likely Pitfall             | Mitigation                                              |
+| --------------------- | -------------------------- | ------------------------------------------------------- |
 | **Data Model Design** | Inefficient storage layout | Store wishlist as single string per guest, not per-item |
-| **API Design** | Missing authorization | Enforce "view own + view recipient's" access pattern |
-| **Implementation** | Race conditions in updates | Rely on Durable Object input/output gates |
-| **Testing** | Missing concurrency tests | Add tests for multiple simultaneous updates |
-| **Migration** | Breaking existing parties | Use versioned schema and graceful fallbacks |
-| **Deployment** | Overload under traffic | Monitor DO queue depth and response times |
+| **API Design**        | Missing authorization      | Enforce "view own + view recipient's" access pattern    |
+| **Implementation**    | Race conditions in updates | Rely on Durable Object input/output gates               |
+| **Testing**           | Missing concurrency tests  | Add tests for multiple simultaneous updates             |
+| **Migration**         | Breaking existing parties  | Use versioned schema and graceful fallbacks             |
+| **Deployment**        | Overload under traffic     | Monitor DO queue depth and response times               |
 
 ---
 
@@ -407,16 +435,17 @@ Before deploying wishlist feature:
 
 ## Sources
 
-| Area | Confidence | Sources |
-|------|------------|---------|
-| Durable Objects behavior | HIGH | Official Cloudflare documentation, blog posts |
-| Race conditions | HIGH | "Durable Objects: Easy, Fast, Correct" (2021) |
-| Storage limits | HIGH | Workers KV limits documentation |
-| Error handling | HIGH | Durable Objects error handling docs |
-| Security practices | MEDIUM | OWASP Serverless Top 10, general best practices |
-| Input validation | MEDIUM | OWASP guidelines, web security best practices |
+| Area                     | Confidence | Sources                                         |
+| ------------------------ | ---------- | ----------------------------------------------- |
+| Durable Objects behavior | HIGH       | Official Cloudflare documentation, blog posts   |
+| Race conditions          | HIGH       | "Durable Objects: Easy, Fast, Correct" (2021)   |
+| Storage limits           | HIGH       | Workers KV limits documentation                 |
+| Error handling           | HIGH       | Durable Objects error handling docs             |
+| Security practices       | MEDIUM     | OWASP Serverless Top 10, general best practices |
+| Input validation         | MEDIUM     | OWASP guidelines, web security best practices   |
 
 **Confidence notes:**
+
 - Durable Objects internals and behavior: HIGH confidence (official docs)
 - Wishlist-specific implementation patterns: MEDIUM confidence (extrapolated from general patterns)
 - Security best practices: MEDIUM confidence (general serverless security, not Cloudflare-specific)

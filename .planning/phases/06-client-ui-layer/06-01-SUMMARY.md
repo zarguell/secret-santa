@@ -101,5 +101,6 @@ None
 Wishlist UI is complete and ready for Phase 7 (Recipient Wishlist Integration), which will display the recipient's wishlist on the guest's assignment page. The wishlist API endpoints from Phase 5 are fully functional and the client UI now provides complete CRUD operations (create, read, update) for wishlists.
 
 ---
-*Phase: 06-client-ui-layer*
-*Completed: 2026-01-20*
+
+_Phase: 06-client-ui-layer_
+_Completed: 2026-01-20_

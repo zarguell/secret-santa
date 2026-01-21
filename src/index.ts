@@ -196,12 +196,9 @@ export default {
           );
           await partyStub.setWishlist(guestId, body.wishlist);
 
-          return new Response(
-            JSON.stringify({ success: true }),
-            {
-              headers: { ...corsHeaders, "Content-Type": "application/json" },
-            },
-          );
+          return new Response(JSON.stringify({ success: true }), {
+            headers: { ...corsHeaders, "Content-Type": "application/json" },
+          });
         } catch (error) {
           return new Response(JSON.stringify({ error: error.message }), {
             status: 500,
@@ -242,12 +239,9 @@ export default {
           );
           const wishlist = await partyStub.getWishlist(guestId);
 
-          return new Response(
-            JSON.stringify({ wishlist }),
-            {
-              headers: { ...corsHeaders, "Content-Type": "application/json" },
-            },
-          );
+          return new Response(JSON.stringify({ wishlist }), {
+            headers: { ...corsHeaders, "Content-Type": "application/json" },
+          });
         } catch (error) {
           return new Response(JSON.stringify({ error: error.message }), {
             status: 500,

@@ -16,43 +16,44 @@ score: 4/4 must-haves verified
 
 ### Observable Truths
 
-| #   | Truth   | Status     | Evidence       |
-| --- | ------- | ---------- | -------------- |
-| 1   | Party DO stores wishlist text for a guest ID and retrieves it correctly | ✓ VERIFIED | setWishlist() at line 135, getWishlist() at line 167 in src/party.ts, both using per-guest key pattern `wishlist:${guestId}` |
-| 2   | System rejects wishlist updates exceeding 500 characters with clear error | ✓ VERIFIED | Validation at line 156-158 throws "Wishlist must be 500 characters or less" for input.length > 500 |
-| 3   | System returns empty string when no wishlist exists for a guest (not null/undefined) | ✓ VERIFIED | getWishlist() at line 171 returns `wishlist || ""`, never returns null/undefined |
-| 4   | Unit tests verify storage/retrieval, validation, and empty state handling | ✓ VERIFIED | 10 wishlist tests in tests/party.test.ts lines 128-369, all passing (3 skipped due to test framework limitation, not code issues) |
+| #   | Truth                                                                                | Status     | Evidence                                                                                                                          |
+| --- | ------------------------------------------------------------------------------------ | ---------- | --------------------------------------------------------------------------------------------------------------------------------- | --- | --------------------------------- |
+| 1   | Party DO stores wishlist text for a guest ID and retrieves it correctly              | ✓ VERIFIED | setWishlist() at line 135, getWishlist() at line 167 in src/party.ts, both using per-guest key pattern `wishlist:${guestId}`      |
+| 2   | System rejects wishlist updates exceeding 500 characters with clear error            | ✓ VERIFIED | Validation at line 156-158 throws "Wishlist must be 500 characters or less" for input.length > 500                                |
+| 3   | System returns empty string when no wishlist exists for a guest (not null/undefined) | ✓ VERIFIED | getWishlist() at line 171 returns `wishlist                                                                                       |     | ""`, never returns null/undefined |
+| 4   | Unit tests verify storage/retrieval, validation, and empty state handling            | ✓ VERIFIED | 10 wishlist tests in tests/party.test.ts lines 128-369, all passing (3 skipped due to test framework limitation, not code issues) |
 
 **Score:** 4/4 truths verified
 
 ### Required Artifacts
 
-| Artifact | Expected    | Status | Details |
-| -------- | ----------- | ------ | ------- |
-| `src/types.ts` | Wishlist storage documentation | ✓ VERIFIED | Lines 33-36 document per-guest key pattern, confirm no separate WishlistData interface needed (simple string storage) |
-| `src/party.ts` | setWishlist() and getWishlist() methods | ✓ VERIFIED | setWishlist() at line 135-164 (30 lines), getWishlist() at line 167-172 (6 lines), both substantive implementations with full validation and storage logic |
-| `tests/party.test.ts` | Unit tests for wishlist DO methods | ✓ VERIFIED | describe("Wishlist Storage") at line 128 with 10 tests covering storage, retrieval, validation, empty state, Unicode, and edge cases |
+| Artifact              | Expected                                | Status     | Details                                                                                                                                                    |
+| --------------------- | --------------------------------------- | ---------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `src/types.ts`        | Wishlist storage documentation          | ✓ VERIFIED | Lines 33-36 document per-guest key pattern, confirm no separate WishlistData interface needed (simple string storage)                                      |
+| `src/party.ts`        | setWishlist() and getWishlist() methods | ✓ VERIFIED | setWishlist() at line 135-164 (30 lines), getWishlist() at line 167-172 (6 lines), both substantive implementations with full validation and storage logic |
+| `tests/party.test.ts` | Unit tests for wishlist DO methods      | ✓ VERIFIED | describe("Wishlist Storage") at line 128 with 10 tests covering storage, retrieval, validation, empty state, Unicode, and edge cases                       |
 
 ### Key Link Verification
 
-| From | To  | Via | Status | Details |
-| ---- | --- | --- | ------ | ------- |
-| src/party.ts:setWishlist() | this.ctx.storage.put | DO storage API | ✓ WIRED | Line 161: `await this.ctx.storage.put(\`wishlist:\${guestId}\`, wishlist);` - complete with validation before storage |
+| From                       | To                   | Via            | Status  | Details                                                                                                                                      |
+| -------------------------- | -------------------- | -------------- | ------- | -------------------------------------------------------------------------------------------------------------------------------------------- |
+| src/party.ts:setWishlist() | this.ctx.storage.put | DO storage API | ✓ WIRED | Line 161: `await this.ctx.storage.put(\`wishlist:\${guestId}\`, wishlist);` - complete with validation before storage                        |
 | src/party.ts:getWishlist() | this.ctx.storage.get | DO storage API | ✓ WIRED | Line 168: `const wishlist = await this.ctx.storage.get<string>(\`wishlist:\${guestId}\`);` - complete with empty string fallback at line 171 |
 
 ### Requirements Coverage
 
-| Requirement | Status | Evidence |
-| ----------- | ------ | -------- |
-| STOR-01: Party DO stores wishlists using per-guest key pattern | ✓ SATISFIED | Line 161 uses `wishlist:${guestId}` key pattern, confirmed in types.ts documentation |
-| STOR-02: Per-guest storage key pattern `wishlist:{guestId}` | ✓ SATISFIED | Used in both setWishlist() and getWishlist() methods |
-| STOR-03: 500 character limit enforced | ✓ SATISFIED | Lines 156-158 validate and throw error for length > 500 |
-| STOR-04: Empty wishlist state handled | ✓ SATISFIED | Line 171 returns empty string for missing wishlists |
-| TEST-01: Unit tests cover wishlist operations | ✓ SATISFIED | 10 tests covering all required scenarios (7 passing, 3 skipped due to test framework limitation) |
+| Requirement                                                    | Status      | Evidence                                                                                         |
+| -------------------------------------------------------------- | ----------- | ------------------------------------------------------------------------------------------------ |
+| STOR-01: Party DO stores wishlists using per-guest key pattern | ✓ SATISFIED | Line 161 uses `wishlist:${guestId}` key pattern, confirmed in types.ts documentation             |
+| STOR-02: Per-guest storage key pattern `wishlist:{guestId}`    | ✓ SATISFIED | Used in both setWishlist() and getWishlist() methods                                             |
+| STOR-03: 500 character limit enforced                          | ✓ SATISFIED | Lines 156-158 validate and throw error for length > 500                                          |
+| STOR-04: Empty wishlist state handled                          | ✓ SATISFIED | Line 171 returns empty string for missing wishlists                                              |
+| TEST-01: Unit tests cover wishlist operations                  | ✓ SATISFIED | 10 tests covering all required scenarios (7 passing, 3 skipped due to test framework limitation) |
 
 ### Anti-Patterns Found
 
 None detected. Code quality checks:
+
 - No TODO/FIXME comments in wishlist implementation
 - No placeholder or "coming soon" text
 - No empty return statements or stub implementations
@@ -62,6 +63,7 @@ None detected. Code quality checks:
 ### Human Verification Required
 
 **None.** All verification can be done programmatically:
+
 - Storage/retrieval is verified by unit tests
 - Validation logic is visible in code
 - Empty state handling is explicit in return statement
@@ -72,6 +74,7 @@ None detected. Code quality checks:
 ### Gaps Summary
 
 No gaps found. All must-haves verified:
+
 - setWishlist() stores data with validation (type check, 500 char limit, guest membership)
 - getWishlist() retrieves data with empty string fallback
 - Per-guest key pattern used correctly

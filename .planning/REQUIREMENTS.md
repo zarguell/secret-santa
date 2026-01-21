@@ -19,7 +19,7 @@ Requirements for v1.1 milestone. Each maps to roadmap phases.
 - [x] **API-01**: POST /api/guest/:guestId/wishlist updates guest's wishlist with validation
 - [x] **API-02**: GET /api/guest/:guestId/wishlist returns guest's current wishlist or empty string
 - [x] **API-03**: GET /api/guest/:guestId/assignment response includes recipientWishlist field
-  - *Deviation: Implementation uses `recipientGuestId` instead of `recipientWishlist` — enables Phase 7 to fetch recipient's wishlist separately*
+  - _Deviation: Implementation uses `recipientGuestId` instead of `recipientWishlist` — enables Phase 7 to fetch recipient's wishlist separately_
 - [x] **API-04**: API validates input (sanitizes, enforces 500 char limit)
 
 ### User Interface (UI)
@@ -58,43 +58,45 @@ Deferred to future release. Tracked but not in current roadmap.
 
 Explicitly excluded. Documented to prevent scope creep.
 
-| Feature | Reason |
-|---------|--------|
-| Email notifications for wishlist updates | v1 focuses on link-based access only |
-| Multiple wishlist sets per guest | Adds complexity, freeform text allows organization |
-| Rich text/Markdown formatting | Adds parsing complexity and XSS risks |
-| Public wishlist directory | Privacy concern, only recipient should see wishlist |
-| Wishlist due dates | Adds notification system, creates unnecessary pressure |
-| Authentication beyond guest links | Simple security model sufficient for non-sensitive data |
+| Feature                                  | Reason                                                  |
+| ---------------------------------------- | ------------------------------------------------------- |
+| Email notifications for wishlist updates | v1 focuses on link-based access only                    |
+| Multiple wishlist sets per guest         | Adds complexity, freeform text allows organization      |
+| Rich text/Markdown formatting            | Adds parsing complexity and XSS risks                   |
+| Public wishlist directory                | Privacy concern, only recipient should see wishlist     |
+| Wishlist due dates                       | Adds notification system, creates unnecessary pressure  |
+| Authentication beyond guest links        | Simple security model sufficient for non-sensitive data |
 
 ## Traceability
 
 Which phases cover which requirements. Updated during roadmap creation.
 
-| Requirement | Phase | Status |
-|-------------|-------|--------|
-| STOR-01 | Phase 4 | Complete |
-| STOR-02 | Phase 4 | Complete |
-| STOR-03 | Phase 4 | Complete |
-| STOR-04 | Phase 4 | Complete |
-| API-01 | Phase 5 | Complete |
-| API-02 | Phase 5 | Complete |
-| API-03 | Phase 5 | Complete |
-| API-04 | Phase 5 | Complete |
-| UI-01 | Phase 6 | Complete |
-| UI-02 | Phase 6 | Complete |
-| UI-03 | Phase 6 | Complete |
-| UI-04 | Phase 7 | Pending |
-| UI-05 | Phase 7 | Pending |
-| TEST-01 | Phase 4 | Complete |
-| TEST-02 | Phase 5 | Complete |
-| TEST-03 | Phase 6 | Pending |
+| Requirement | Phase   | Status   |
+| ----------- | ------- | -------- |
+| STOR-01     | Phase 4 | Complete |
+| STOR-02     | Phase 4 | Complete |
+| STOR-03     | Phase 4 | Complete |
+| STOR-04     | Phase 4 | Complete |
+| API-01      | Phase 5 | Complete |
+| API-02      | Phase 5 | Complete |
+| API-03      | Phase 5 | Complete |
+| API-04      | Phase 5 | Complete |
+| UI-01       | Phase 6 | Complete |
+| UI-02       | Phase 6 | Complete |
+| UI-03       | Phase 6 | Complete |
+| UI-04       | Phase 7 | Pending  |
+| UI-05       | Phase 7 | Pending  |
+| TEST-01     | Phase 4 | Complete |
+| TEST-02     | Phase 5 | Complete |
+| TEST-03     | Phase 6 | Pending  |
 
 **Coverage:**
+
 - v1 requirements: 16 total
 - Mapped to phases: 16 ✓
 - Unmapped: 0
 
 ---
-*Requirements defined: 2026-01-19*
-*Last updated: 2026-01-20 - Phase 6 requirements marked complete*
+
+_Requirements defined: 2026-01-19_
+_Last updated: 2026-01-20 - Phase 6 requirements marked complete_

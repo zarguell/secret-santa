@@ -30,9 +30,7 @@ async function loadAssignment() {
 
 async function loadWishlist() {
   try {
-    const response = await fetch(
-      `${API_BASE}/api/guest/${guestId}/wishlist`
-    );
+    const response = await fetch(`${API_BASE}/api/guest/${guestId}/wishlist`);
 
     if (response.status === 404) {
       console.warn("Wishlist not found (guest may not be in party)");
@@ -78,16 +76,13 @@ async function saveWishlist() {
   messageDiv.classList.add("hidden");
 
   try {
-    const response = await fetch(
-      `${API_BASE}/api/guest/${guestId}/wishlist`,
-      {
-        method: "PUT",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ wishlist: text }),
-      }
-    );
+    const response = await fetch(`${API_BASE}/api/guest/${guestId}/wishlist`, {
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ wishlist: text }),
+    });
 
     if (!response.ok) {
       throw new Error(`HTTP ${response.status}`);
@@ -121,7 +116,7 @@ async function loadRecipientWishlist(recipientGuestId) {
 
   try {
     const response = await fetch(
-      `${API_BASE}/api/guest/${recipientGuestId}/wishlist`
+      `${API_BASE}/api/guest/${recipientGuestId}/wishlist`,
     );
 
     if (response.status === 404) {
@@ -191,7 +186,9 @@ function displayAssignment(data) {
 
   // Load recipient's wishlist if available
   if (data.recipientGuestId) {
-    const recipientSection = document.getElementById("recipient-wishlist-section");
+    const recipientSection = document.getElementById(
+      "recipient-wishlist-section",
+    );
     if (recipientSection) {
       recipientSection.classList.remove("hidden");
       loadRecipientWishlist(data.recipientGuestId);
@@ -210,8 +207,12 @@ function showError(message) {
 
 // Event listeners for wishlist (wait for DOM to be ready)
 document.addEventListener("DOMContentLoaded", function () {
-  document.getElementById("wishlistText")?.addEventListener("input", updateCounter);
-  document.getElementById("saveWishlistBtn")?.addEventListener("click", saveWishlist);
+  document
+    .getElementById("wishlistText")
+    ?.addEventListener("input", updateCounter);
+  document
+    .getElementById("saveWishlistBtn")
+    ?.addEventListener("click", saveWishlist);
 });
 
 // Load assignment on page load

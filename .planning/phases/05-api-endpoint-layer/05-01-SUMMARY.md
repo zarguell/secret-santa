@@ -115,5 +115,6 @@ None - all tasks completed as planned, all tests passing.
 - Ready for Phase 7: Recipient Wishlist Integration to display recipient's wishlist
 
 ---
-*Phase: 05-api-endpoint-layer*
-*Completed: 2026-01-20*
+
+_Phase: 05-api-endpoint-layer_
+_Completed: 2026-01-20_

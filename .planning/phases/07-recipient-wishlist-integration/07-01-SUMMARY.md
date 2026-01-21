@@ -25,7 +25,14 @@ tech-stack:
 
 key-files:
   created: []
-  modified: [public/guest.html, public/guest.js, src/index.ts, public/style.css, tests/api.test.ts]
+  modified:
+    [
+      public/guest.html,
+      public/guest.js,
+      src/index.ts,
+      public/style.css,
+      tests/api.test.ts,
+    ]
 
 key-decisions:
   - "Use innerHTML instead of textContent to preserve newline formatting"
@@ -147,5 +154,6 @@ None - all issues found during verification were auto-fixed with proper solution
 **Milestone v1.1 Wishlist Feature: 100% complete (4/4 phases)**
 
 ---
-*Phase: 07-recipient-wishlist-integration*
-*Completed: 2026-01-21*
+
+_Phase: 07-recipient-wishlist-integration_
+_Completed: 2026-01-21_

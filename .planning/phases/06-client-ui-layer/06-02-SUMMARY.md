@@ -119,5 +119,6 @@ None - no external service configuration required.
 - Ready for Phase 7: Recipient Wishlist Integration (display recipient's wishlist on guest's assignment page)
 
 ---
-*Phase: 06-client-ui-layer*
-*Completed: 2026-01-20*
+
+_Phase: 06-client-ui-layer_
+_Completed: 2026-01-20_

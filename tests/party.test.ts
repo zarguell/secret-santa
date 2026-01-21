@@ -127,7 +127,7 @@ describe("Party Durable Object", () => {
     expect(party.createdAt).toBeTruthy();
   });
 
-    describe("Wishlist Storage", () => {
+  describe("Wishlist Storage", () => {
     it("should store and retrieve wishlist for a guest", async () => {
       partyId = env.PARTY_DO.newUniqueId();
       partyStub = env.PARTY_DO.get(partyId);
@@ -138,7 +138,7 @@ describe("Party Durable Object", () => {
       });
 
       const guestId = createResult.guestMappings.find(
-        (m) => m.guestName === "Alice"
+        (m) => m.guestName === "Alice",
       )!.guestId;
 
       // Set wishlist
@@ -160,7 +160,7 @@ describe("Party Durable Object", () => {
       });
 
       const guestId = createResult.guestMappings.find(
-        (m) => m.guestName === "Alice"
+        (m) => m.guestName === "Alice",
       )!.guestId;
 
       // Get wishlist without setting it
@@ -179,7 +179,7 @@ describe("Party Durable Object", () => {
       });
 
       const guestId = createResult.guestMappings.find(
-        (m) => m.guestName === "Alice"
+        (m) => m.guestName === "Alice",
       )!.guestId;
 
       // Try to set wishlist with 501 characters
@@ -191,7 +191,7 @@ describe("Party Durable Object", () => {
       } catch (e) {
         errorThrown = true;
         expect((e as Error).message).toBe(
-          "Wishlist must be 500 characters or less"
+          "Wishlist must be 500 characters or less",
         );
       }
       expect(errorThrown).toBe(true);
@@ -207,7 +207,7 @@ describe("Party Durable Object", () => {
       });
 
       const guestId = createResult.guestMappings.find(
-        (m) => m.guestName === "Alice"
+        (m) => m.guestName === "Alice",
       )!.guestId;
 
       // Set wishlist with exactly 500 characters
@@ -230,7 +230,7 @@ describe("Party Durable Object", () => {
       });
 
       const guestId = createResult.guestMappings.find(
-        (m) => m.guestName === "Alice"
+        (m) => m.guestName === "Alice",
       )!.guestId;
 
       // @ts-expect-error - Testing type validation
@@ -286,10 +286,10 @@ describe("Party Durable Object", () => {
       });
 
       const aliceId = createResult.guestMappings.find(
-        (m) => m.guestName === "Alice"
+        (m) => m.guestName === "Alice",
       )!.guestId;
       const bobId = createResult.guestMappings.find(
-        (m) => m.guestName === "Bob"
+        (m) => m.guestName === "Bob",
       )!.guestId;
 
       await partyStub.setWishlist(aliceId, "Alice wants books");
@@ -312,7 +312,7 @@ describe("Party Durable Object", () => {
       });
 
       const guestId = createResult.guestMappings.find(
-        (m) => m.guestName === "Alice"
+        (m) => m.guestName === "Alice",
       )!.guestId;
 
       // Set a wishlist
@@ -336,7 +336,7 @@ describe("Party Durable Object", () => {
       });
 
       const guestId = createResult.guestMappings.find(
-        (m) => m.guestName === "Alice"
+        (m) => m.guestName === "Alice",
       )!.guestId;
 
       const unicodeWishlist = "🎁 我想一个咖啡机 ☕ Привет";
@@ -357,7 +357,7 @@ describe("Party Durable Object", () => {
       });
 
       const guestId = createResult.guestMappings.find(
-        (m) => m.guestName === "Alice"
+        (m) => m.guestName === "Alice",
       )!.guestId;
 
       const multilineWishlist = "Item 1\nItem 2\nItem 3\tTabs too!";
