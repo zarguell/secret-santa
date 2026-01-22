@@ -7,6 +7,7 @@
 **Overall:** Serverless Edge Application with Durable Objects
 
 **Key Characteristics:**
+
 - Single Cloudflare Worker handling all HTTP requests
 - Durable Object per party for stateful storage
 - KV namespace for fast guest ID lookups
@@ -16,24 +17,28 @@
 ## Layers
 
 **API Layer:**
+
 - Purpose: Handle HTTP requests and responses
 - Contains: Route handlers in `src/index.ts` (POST /api/parties, GET /api/guest/:id/assignment, GET /guest/:id)
 - Depends on: Durable Object layer (PARTY_DO), KV storage (GUEST_KV)
 - Used by: Browser clients (HTML/JS in `public/`)
 
 **Business Logic Layer:**
+
 - Purpose: Party creation and Secret Santa assignment logic
 - Contains: `Party` Durable Object class in `src/party.ts`, assignment algorithm in `src/utils.ts`
 - Depends on: Storage layer (Durable Object SQLite storage)
 - Used by: API layer
 
 **Storage Layer:**
+
 - Purpose: Persistent data storage across requests
 - Contains: Durable Object SQLite storage (party data), KV namespace (guest mappings)
 - Depends on: Cloudflare Workers runtime
 - Used by: Business logic layer, API layer
 
 **Utility Layer:**
+
 - Purpose: Shared helpers and type definitions
 - Contains: `src/kv.ts` (KV helpers), `src/types.ts` (TypeScript interfaces), `src/utils.ts` (assignment algorithm)
 - Depends on: Cloudflare Workers APIs (KVNamespace, crypto)
@@ -64,6 +69,7 @@
 7. Frontend (inline HTML in `src/index.ts:181`) displays assignment to guest
 
 **State Management:**
+
 - Party data: Stored in Durable Object SQLite storage (one DO per party)
 - Guest mappings: Stored in KV namespace for fast lookup (guest:uuid → partyId)
 - No in-memory state between requests (stateless Worker)
@@ -72,24 +78,28 @@
 ## Key Abstractions
 
 **Durable Object (Party):**
+
 - Purpose: Encapsulate party state and assignment logic
 - Location: `src/party.ts:5`
 - Methods: `createParty()`, `getGuestAssignment()`, `assignGift()`, `getParty()`
 - Pattern: One DO instance per party, accessed via unique ID
 
 **API Routes:**
+
 - Purpose: HTTP request/response handling
 - Location: `src/index.ts:7` (exported Worker fetch handler)
 - Pattern: If/else chain matching pathname + method
 - Examples: `/api/parties` (POST), `/api/guest/:id/assignment` (GET)
 
 **Assignment Generator:**
+
 - Purpose: Random Secret Santa pairings without self-assignment
 - Location: `src/utils.ts:1`
 - Pattern: Fisher-Yates shuffle + neighbor swap to prevent self-assignment
 - Returns: `Record<string, string>` mapping guest → recipient
 
 **KV Storage Helpers:**
+
 - Purpose: Guest ID to party ID lookups
 - Location: `src/kv.ts`
 - Functions: `storeGuestMappings()`, `getGuestMapping()`
@@ -98,16 +108,19 @@
 ## Entry Points
 
 **Worker Entry:**
+
 - Location: `src/index.ts:7` (exported default object with `fetch` method)
 - Triggers: HTTP requests to deployed Worker
 - Responsibilities: Route requests, validate input, call DOs/KV, return responses
 
 **Durable Object Entry:**
+
 - Location: `src/party.ts:5` (exported Party class)
 - Triggers: When Party DO is accessed via `env.PARTY_DO.get(id)`
 - Responsibilities: Manage party state, handle storage operations
 
 **Frontend Entry:**
+
 - Location: `public/index.html` (main party creation page), `public/guest.html` (guest assignment page)
 - Triggers: Browser navigation to root or `/guest/:uuid` routes
 - Responsibilities: User interface, API calls, display results
@@ -117,6 +130,7 @@
 **Strategy:** Try/catch at Worker level, return appropriate HTTP status codes
 
 **Patterns:**
+
 - API validation errors: Return 400 with JSON error message (e.g., "Party name and at least 2 guests required" in `src/index.ts:33`)
 - Not found errors: Return 404 (e.g., "Guest link not found" in `src/index.ts:130`)
 - DO errors: Throw Error, caught by try/catch, return 500 with error message in `src/index.ts:148`
@@ -125,19 +139,22 @@
 ## Cross-Cutting Concerns
 
 **Logging:**
+
 - Console.error for Worker errors in `src/index.ts:298`
 - No structured logging
 
 **Validation:**
+
 - Input validation at API boundary (guest count, uniqueness in `src/index.ts:32`)
 - Frontend validation in `public/app.js:22` (duplicate check)
 - Guest ID format validation (36-char UUID check in `src/index.ts:120`)
 
 **CORS:**
+
 - CORS headers added to all responses in `src/index.ts:16`
 - OPTIONS method handled for preflight requests in `src/index.ts:22`
 
 ---
 
-*Architecture analysis: 2026-01-17*
-*Update when major patterns change*
+_Architecture analysis: 2026-01-17_
+_Update when major patterns change_
