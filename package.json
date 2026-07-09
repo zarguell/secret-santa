@@ -9,7 +9,7 @@
     "test:coverage": "vitest run --coverage"
   },
   "devDependencies": {
-    "@cloudflare/vitest-pool-workers": "^0.17.0",
+    "@cloudflare/vitest-pool-workers": "^0.18.0",
     "@cloudflare/workers-types": "^4.20241112.0",
     "vitest": "^4.0.0",
     "wrangler": "^4.0.0"
